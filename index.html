@@ -1,822 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SelfActual - Transforming Work Through Trust-Based AI</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-            background-color: #f9fafb;
-        }
-        .hero-gradient {
-            background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%);
-        }
-        .card {
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .dots-bg {
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        .highlight-text {
-            color: #d4be00;
-            font-weight: 600;
-        }
-        .value-tag {
-            display: inline-block;
-            background: #e6da03;
-            color: #333333;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(215, 204, 0, 0.25);
-            transition: all 0.2s ease;
-        }
-        .value-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(215, 204, 0, 0.3);
-        }
-        .stats-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1;
-            color: #d4be00;
-        }
-        .testimonial {
-            position: relative;
-        }
-        .testimonial:before {
-            content: "";
-            position: absolute;
-            top: -20px;
-            left: -10px;
-            font-size: 5rem;
-            color: rgba(215, 204, 0, 0.1);
-            font-family: serif;
-            line-height: 1;
-        }
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .animate-pulse-slow {
-            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        .yellow-button {
-            background-color: #e6da03;
-            color: #333333;
-            transition: all 0.3s ease;
-        }
-        .yellow-button:hover {
-            background-color: #d4be00;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .icon-yellow {
-            color: #e6da03;
-        }
-        .section-divider {
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #e6da03, transparent);
-            width: 100%;
-            margin: 2rem auto;
-        }
-        .problem-card {
-            border-left: 4px solid #ef4444;
-        }
-        .solution-card {
-            border-left: 4px solid #10b981;
-        }
-        .border-bottom-yellow {
-            border-bottom: 2px solid #e6da03;
-        }
-        .metric-card {
-            border-left: 4px solid #e6da03;
-        }
-        .w-2\/3 {
-            width: 66.666667%;
-        }
-        .h-2\/3 {
-            height: 66.666667%;
-        }
-        .mx-auto {
-            margin-left: auto;
-            margin-right: auto;
-        }
-        svg {
-            display: block;
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SelfActual — AI that actually knows you</title>
+  <meta name="description" content="Tools for understanding yourself better — powered by AI that remembers, learns, and belongs to you.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white bg-opacity-90 backdrop-filter backdrop-blur-sm shadow-sm">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center">
-                <!-- Logo SVG -->
-                <div class="w-32 h-16 relative">
-                    <image src="selfActualLogo.avif" alt="SelfActual Logo" class="w-full h-full object-contain">
-                </div>
-            </div>
 
-            <!-- Navigation Menu -->
-            <nav class="hidden md:flex space-x-8">
-                <a href="#workplace-crisis" class="text-gray-700 hover:text-yellow-600 transition-colors duration-200">Workplace Crisis</a>
-                <a href="#solution" class="text-gray-700 hover:text-yellow-600 transition-colors duration-200">Our Approach</a>
-                <a href="#talia" class="text-gray-700 hover:text-yellow-600 transition-colors duration-200">Meet Talia</a>
-                <a href="#benefits" class="text-gray-700 hover:text-yellow-600 transition-colors duration-200">Impact</a>
-                <a href="mailto:brad@selfactual.ai" class="yellow-button px-4 py-2 rounded-md font-medium">Connect</a>
-            </nav>
-
-            <!-- Mobile Menu Button -->
-            <button class="md:hidden text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero-gradient py-20 md:py-28">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0">
-                    <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                        Personal AI at Work
-                    </h1>
-                    <p class="text-xl text-gray-700 mb-8">
-                        SelfActual combines workshops, skills frameworks, and AI to build employee-owned data profiles that unlock human potential at scale.
-                    </p>
-                    <div class="flex flex-wrap gap-3">
-                        <span class="value-tag">Team Building Workshops</span>
-                        <span class="value-tag">Skills Frameworks</span>
-                        <span class="value-tag">Trust-Based Data</span>
-                        <span class="value-tag">AI Insights</span>
-                        <span class="value-tag">Enhanced Communication</span>
-                        <span class="value-tag">Strategy Alignment</span>
-                        <span class="value-tag">Talent Development</span>
-                        <span class="value-tag">Team Cohesion</span>
-                        <span class="value-tag">Leadership Growth</span>
-                    </div>
-                </div>
-                <div class="md:w-1/2 md:pl-12 relative">
-                    <div class="relative w-full h-64 md:h-96 bg-white rounded-xl shadow-lg overflow-hidden flex items-center justify-center animate-float">
-                        <div class="dots-bg absolute inset-0 opacity-30"></div>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                            <div class="w-2/3 h-2/3 relative">
-                                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 268 138" class="w-full h-full" preserveAspectRatio="xMidYMid meet">
-                                    <defs>
-                                        <style>
-                                            .st0 {
-                                                fill: #ebec64;
-                                                stroke: #000;
-                                                stroke-miterlimit: 10;
-                                                stroke-width: .75px;
-                                            }
-                                        </style>
-                                    </defs>
-                                    <path class="st0" d="M28.99.88s16.59,14.17,19.61,18.86l-.48,3.02c-1.36-1.32-5.02-4.94-6.34-5.46-2.56-1-5.62-.27-8.15.8-4.64,2.06-6.53,6.46-6.99,7.71-.19.45,0,.81.33,1.13.58.62,1.96,2.01,3.73,3.82,4.42,4.51,11.14,11.33,12.95,13.22.71.77,1.08,3.05,1.12,4.23,0,2,.15,2.93-.97,4.49-8.1,11.32-15.52,10.75-23.31,8.25-.55-.17-.84-.55-1.27-.97-2.56-2.64-14.1-14.03-16.83-16.85-1.07-.94-.5-5.55-.5-5.55,0,0,1.21,1.17,2.18,2.02,1.3,1.13,3.2,2.79,4.68,4.08,1.67,1.42,2.55,2.4,3.86,2.64,6.96.84,13.37-6.62,14.76-9.55.21-.36.39-.75.08-1.09-.35-.44-1.38-1.36-2.85-2.77-4.77-4.78-12.13-11.09-15.1-14.68,0,0-.14-5.3.45-6.79C12.92,3.86,17.8,1.2,23.88.12c.52-.09,1.05-.13,1.56,0l3.54.77h.01Z"/>
-                                    <polygon class="st0" points="86.22 61.85 70.76 45.9 65.07 45.9 67.1 38.37 89.48 38.37 75.03 22.71 71.17 22.71 72.39 17.21 96.8 17.21 82.15 1.96 56.52 1.96 45.94 46.71 61 61.85 86.22 61.85"/>
-                                    <polyline class="st0" points="140.61 61.85 146.06 40.77 168.2 40.2 154.16 25.35 150.31 24.79 152 17.21 176.41 17.21 161.76 1.96 136.13 1.96 125.55 46.71 140.61 61.85"/>
-                                    <polyline class="st0" points="102.9 .94 118.36 16.4 111.85 46.1 116.53 46.1 131.99 61.85 105.95 61.85 91.51 46.91 102.9 .94 102.9 .94 102.9 .94"/>
-                                    <polyline class="st0" points="0 121.16 27.43 74.98 43.5 90.85 47.16 136.82 32.52 122.79 24.59 122.79 16.04 136.82 0 121.16"/>
-                                    <path class="st0" d="M94.79,95.04c-.54-2.11-5.02-5.86-5.02-5.86-4.17-4.11-9.5-9-11.81-11.13-1.4-1.44-7.04-3.15-9.09-3.07-4.59.14-7.99,2.66-11.53,5.68-6.07,5.51-10.88,21.64-9.43,33.82.3,2.81,2,4.5,3.22,5.56,5.46,4.72,12.25,12.41,16.57,16.45,2.72,2.54,9.76,1.7,14.16-.84,2.62-1.52,5.41-4.95,5.41-4.95-2.24-2.84-10.86-11.42-13.77-14.13-.94-.81-1.88-1.83-1.88-1.83-5.14,4.02-6.61.89-6.61.89.87-5.1,3.15-13.23,8.54-18.83,5.12-5.64,11.84-5.77,18.49-1.59,2.51,1.58,3.66,3.07,3.66,3.07l-.92-3.26v.02Z"/>
-                                    <polygon class="st0" points="89.27 76.3 122.43 76.3 137.89 91.46 121 91.46 109.82 136.82 93.75 121.36 102.29 89.43 89.27 76.3"/>
-                                    <path class="st0" d="M158.47,91.27c-2.57-3.42-9.99-10.08-13.27-13.61-.52-.42-1.04-1.26-1.66-1.07-1.43,3.28-2.64,9.1-4.02,13.39-2.03,7.1-4.26,14.9-5.11,17.88-.72,2.52-.49,5.31-.45,7.95.1,2.22.64,2.61,2.12,4.2,1.18,1.26,2.33,2.49,3.56,3.77,2.54,2.63,5.31,5.42,8,7.88,3.79,3.32,6.66,6.34,11.66,5.98,6-.39,12.44-3.39,15.61-8.84,1.52-2.64,2.11-5.53,2.82-8.49,2.07-9.13,5.74-24.73,6.44-28.65-.11-1.16-.75-1.32-2-2.67-3.55-3.32-10.16-9.94-12.85-12.27-.73-.61-.94.24-1.12.89-1.34,4.94-6.76,25.11-8.34,30.94-.41,1.58-.75,2.5-1.8,3.92-1.14,1.38-5.02,7.22-5.11,4.46.18-6.18,4.22-19.61,5.39-23.93.15-.58.32-1.15.15-1.66l-.02-.07h0Z"/>
-                                    <polyline class="st0" points="178.52 121.16 205.95 74.98 222.02 90.85 225.68 136.82 211.04 122.79 203.11 122.79 194.56 136.82 178.52 121.16"/>
-                                    <polyline class="st0" points="238.91 76.41 254.37 91.87 247.86 121.57 252.54 121.57 268 137.33 241.96 137.33 227.52 122.39 238.91 76.41 238.91 76.41 238.91 76.41"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Benefits Section -->
-    <section id="benefits" class="py-20 bg-white">
-    <div class="container mx-auto px-4">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4">Value for Everyone</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                SelfActual creates meaningful impact at every level of the organization.
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- For Employees Card -->
-            <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl border-l-4 border-yellow-500">
-                <h3 class="text-2xl font-semibold mb-4">For Employees</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Employees discover their unique strengths through AI-guided assessment</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Individuals control their professional data with personal data ownership</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Workers find meaning by aligning work with their authentic selves</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Professionals receive personalized guidance for career growth</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- For Teams Card -->
-            <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl border-l-4 border-yellow-500">
-                <h3 class="text-2xl font-semibold mb-4">For Teams</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Managers build teams based on complementary strengths and abilities</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Team leaders gain insights into dynamics without invading privacy</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Supervisors facilitate better communication through shared understanding</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Leaders connect team objectives to individual motivations</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- For Executives Card -->
-            <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl border-l-4 border-yellow-500">
-                <h3 class="text-2xl font-semibold mb-4">For Executives</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Executives transform disengaged employees into motivated contributors</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Leadership aligns strategy with workforce capabilities and aspirations</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Decision-makers access data-driven insights while respecting privacy</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">C-suite creates competitive advantage through workforce optimization</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- For Organizations Card -->
-            <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl border-l-4 border-yellow-500">
-                <h3 class="text-2xl font-semibold mb-4">For Organizations</h3>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Organizations build cultures of trust that attract and retain top talent</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Companies bridge the gap between strategy and front-line execution</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Enterprises reduce costs from miscommunication and disengagement</span>
-                    </li>
-                    <li class="flex items-start">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span class="text-gray-700">Businesses create agile, responsive workforces ready for future challenges</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav__logo">
+        <img src="logo.png" alt="SelfActual">
+      </a>
+      <button class="nav__toggle" onclick="document.querySelector('.nav__links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+      <a href="#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
     </div>
-</section>
-    
-    <!-- Talia Section -->
-    <section id="talia" class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Meet Talia: One AI, Many Roles</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Talia adapts to what employees and leaders need, serving a variety of functions across the organization.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="text-yellow-500 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">For Employees</h3>
-                    <p class="text-gray-600 mb-5">
-                        Talia supports individual growth, development, and career advancement through personalized insights.
-                    </p>
-                    <div class="space-y-2 text-gray-600 text-sm">
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Confidant & Knowledge Guide</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Skill Developer</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Career Advisor</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Growth Facilitator</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="text-yellow-500 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">For Managers</h3>
-                    <p class="text-gray-600 mb-5">
-                        Talia helps managers understand their teams, optimize resources, and foster collaboration.
-                    </p>
-                    <div class="space-y-2 text-gray-600 text-sm">
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Team Insights Provider</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Resource Connector</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Project Facilitator</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Communication Enhancer</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="text-yellow-500 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">For Executives</h3>
-                    <p class="text-gray-600 mb-5">
-                        Talia provides strategic insights, talent visibility, and organizational intelligence.
-                    </p>
-                    <div class="space-y-2 text-gray-600 text-sm">
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Strategy Translator</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Talent Spotter</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Culture Monitor</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Innovation Catalyst</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="text-yellow-500 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">For Organizations</h3>
-                    <p class="text-gray-600 mb-5">
-                        Talia connects people, data, and strategy to drive organizational performance and innovation.
-                    </p>
-                    <div class="space-y-2 text-gray-600 text-sm">
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Data Analyzer</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Pattern Identifier</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Human Connector</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span>
-                            <span>Knowledge Network Builder</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- How It Works Section -->
-    <section id="how-it-works" class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Our approach builds value through a progressive journey that starts with what organizations already want.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="flex justify-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                            <span class="text-yellow-500 text-xl font-bold">1</span>
-                        </div>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-3 text-center">Start With Workshops</h3>
-                    <p class="text-gray-600 text-center">
-                        Deliver high-value workshops and skills frameworks that meet immediate organizational needs.
-                    </p>
-                </div>
-                
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="flex justify-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                            <span class="text-yellow-500 text-xl font-bold">2</span>
-                        </div>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-3 text-center">Build Data Profiles</h3>
-                    <p class="text-gray-600 text-center">
-                        Workshop participation and skills assessments generate valuable personal insights stored in employee-owned vaults.
-                    </p>
-                </div>
-                
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="flex justify-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                            <span class="text-yellow-500 text-xl font-bold">3</span>
-                        </div>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-3 text-center">Introduce Talia</h3>
-                    <p class="text-gray-600 text-center">
-                        Our versatile AI connects people, skills, and organizational needs based on trusted information.
-                    </p>
-                </div>
-                
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl">
-                    <div class="flex justify-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
-                            <span class="text-yellow-500 text-xl font-bold">4</span>
-                        </div>
-                    </div>
-                    <h3 class="text-lg font-semibold mb-3 text-center">Create Network Effects</h3>
-                    <p class="text-gray-600 text-center">
-                        Value grows exponentially as more people, teams, and organizations join the SelfActual ecosystem.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+  </nav>
 
-    <!-- Workplace Crisis Section -->
-    <section id="workplace-crisis" class="py-20 bg-white">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">The $8.8 Trillion Workplace Crisis</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Today's workplace faces interconnected challenges that cost organizations productivity, innovation, and employee wellbeing.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-16 h-16 bg-red-50 rounded-bl-full"></div>
-                    <div class="relative z-10">
-                        <div class="text-red-500 mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">Disengagement</h3>
-                        <p class="text-gray-600 mb-4">
-                            Most workers are emotionally disconnected from their work, costing organizations productivity and innovation.
-                        </p>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                            </svg>
-                            <span>80% emotionally disengaged</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-16 h-16 bg-red-50 rounded-bl-full"></div>
-                    <div class="relative z-10">
-                        <div class="text-red-500 mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">Lack of Trust</h3>
-                        <p class="text-gray-600 mb-4">
-                            Workers don't trust organizations or technology companies with their data, limiting authentic engagement.
-                        </p>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                            </svg>
-                            <span>Only 17% trust tech companies with data</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-16 h-16 bg-red-50 rounded-bl-full"></div>
-                    <div class="relative z-10">
-                        <div class="text-red-500 mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">Communication Breakdown</h3>
-                        <p class="text-gray-600 mb-4">
-                            Poor communication wastes time, creates frustration, and disconnects employees from company strategy.
-                        </p>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                            </svg>
-                            <span>7.47 hours wasted weekly per employee</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-6 bg-white rounded-xl shadow-md hover:shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-16 h-16 bg-red-50 rounded-bl-full"></div>
-                    <div class="relative z-10">
-                        <div class="text-red-500 mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-3">Self-Covering</h3>
-                        <p class="text-gray-600 mb-4">
-                            Workers hide their true selves at work, creating barriers to authentic collaboration and engagement.
-                        </p>
-                        <div class="flex items-center text-sm text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                            </svg>
-                            <span>60% hide their true selves at work</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mt-16 bg-gray-50 p-8 rounded-xl shadow-md">
-                <h3 class="text-2xl font-semibold mb-6 text-center">The Costly Impact</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <div class="flex items-start metric-card pl-4">
-                        <div class="stats-number mr-4">80%</div>
-                        <p class="text-gray-700">of workers emotionally disengaged, costing innovation and productivity</p>
-                    </div>
-                    
-                    <div class="flex items-start metric-card pl-4">
-                        <div class="stats-number mr-4">93%</div>
-                        <p class="text-gray-700">of employees don't understand their company's strategy</p>
-                    </div>
-                    
-                    <div class="flex items-start metric-card pl-4">
-                        <div class="stats-number mr-4">$8.8T</div>
-                        <p class="text-gray-700">global economic impact from workplace disengagement and misalignment</p>
-                    </div>
-                    
-                    <div class="flex items-start metric-card pl-4">
-                        <div class="stats-number mr-4">$183B</div>
-                        <p class="text-gray-700">lost when employees are not fully engaged due to stress and fear</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Our Approach Section -->
-    <section id="solution" class="py-20 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4">Our Unique Approach</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    SelfActual starts with what organizations already want and builds a foundation of trust and data ownership.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-100 rounded-bl-full"></div>
-                    <div class="relative z-10">
-                        <div class="text-yellow-500 mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-semibold mb-4">Team Building Workshops</h3>
-                        <p class="text-gray-600 mb-6">
-                            Organizations already want team-building and self-awareness content—we deliver high-value workshops while creating rich data profiles.
-                        </p>
-                        <div class="space-y-2">
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Self-Awareness Building</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Strengths-to-Flow Integration</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Team Dynamics Improvement</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Validated with 25,000+ people</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-100 rounded-bl-full"></div>
-                    <div class="relative z-10">
-                        <div class="text-yellow-500 mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-semibold mb-4">Skills Frameworks</h3>
-                        <p class="text-gray-600 mb-6">
-                            Companies already invest in skills identification and development—we provide frameworks that help map talent while building valuable profiles.
-                        </p>
-                        <div class="space-y-2">
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Skills Identification Tools</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Talent Landscape Mapping</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Strategic Skills Alignment</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Data-Driven Development</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card p-8 bg-white rounded-xl shadow-md hover:shadow-xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-100 rounded-bl-full"></div>
-                    <div class="relative z-10">
-                        <div class="text-yellow-500 mb-6">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </div>
-                        <h3 class="text-2xl font-semibold mb-4">Trust-Based Data Architecture</h3>
-                        <p class="text-gray-600 mb-6">
-                            We build employee-owned data profiles through a distributed architecture that respects privacy while enabling powerful insights.
-                        </p>
-                        <div class="space-y-2">
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Employee-Owned Data</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Granular Privacy Controls</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Connected Organizational Vaults</span>
-                            </div>
-                            <div class="flex items-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500 mr-2 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                </svg>
-                                <span class="text-gray-700">Enhanced Security by Design</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-</div>
-        </div>
-    </section>
-    </div> <!-- Close any open container divs -->
-
-<!-- Footer - remove fixed positioning -->
-<footer class="bg-black text-white py-6 w-full">
-    <div class="container mx-auto px-4 text-center">
-        <p class="text-sm">&copy; 2025 SelfActual. All rights reserved.</p>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <p class="label fade-up">Personal AI, Personal Data</p>
+      <h1 class="fade-up fade-up--d1">AI that actually <span class="gradient-text">knows you.</span></h1>
+      <p class="hero__subtitle fade-up fade-up--d2">
+        Tools for understanding yourself better — powered by AI that remembers, learns, and belongs to you.
+      </p>
+      <div class="waitlist fade-up fade-up--d3" id="waitlist-hero">
+        <input type="email" placeholder="your@email.com" aria-label="Email address">
+        <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
+      </div>
     </div>
-</footer>
+  </section>
+
+  <!-- The Apps -->
+  <section>
+    <div class="container">
+      <p class="label">The Apps</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-lg);">
+        Three tools.<br>One place for your self-knowledge.
+      </h2>
+
+      <div class="cards">
+        <!-- Imprint -->
+        <a href="imprint.html" class="card">
+          <div class="card__icon card__icon--imprint">⟁</div>
+          <h3>Imprint</h3>
+          <p>AI that builds a persistent understanding of how you think, work, and communicate — and gets better every conversation.</p>
+          <ul class="card__features">
+            <li>Remembers your context across sessions</li>
+            <li>Challenges your thinking, not just agrees</li>
+            <li>Your profile, your data, your control</li>
+          </ul>
+          <span class="badge badge--active">In Development</span>
+        </a>
+
+        <!-- Atlas -->
+        <a href="atlas.html" class="card">
+          <div class="card__icon card__icon--atlas">◎</div>
+          <h3>Atlas</h3>
+          <p>All your assessments, reflections, and growth data — brought together in one place with an AI coach that understands the full picture.</p>
+          <ul class="card__features">
+            <li>Import from any assessment tool</li>
+            <li>AI coaching grounded in your actual results</li>
+            <li>One conversation across all your self-knowledge</li>
+          </ul>
+          <span class="badge badge--active">In Development</span>
+        </a>
+
+        <!-- Prompter -->
+        <div class="card">
+          <div class="card__icon card__icon--prompter">✦</div>
+          <h3>Prompter</h3>
+          <p>Guided reflection and journaling that writes to your personal vault — so your insights become part of your self-knowledge, not lost in a notes app.</p>
+          <ul class="card__features">
+            <li>Structured prompts for deeper self-awareness</li>
+            <li>Reflections feed into your AI context</li>
+            <li>Share prompts and frameworks with others</li>
+          </ul>
+          <span class="badge badge--soon">Coming Soon</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Vault — What Connects Everything -->
+  <section style="background: var(--dark); color: var(--white); position: relative; overflow: hidden;">
+    <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(0,229,208,0.08) 0%, transparent 60%);"></div>
+    <div class="container" style="position: relative; z-index: 1;">
+      <div style="text-align: center; max-width: 640px; margin: 0 auto;">
+        <p class="label" style="color: rgba(255,255,255,0.4);">The Foundation</p>
+        <h2 style="margin-top: var(--space-xs); color: var(--white);">One vault. <span style="background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Every app connected.</span></h2>
+        <p style="color: rgba(255,255,255,0.65); margin: var(--space-md) auto var(--space-xl); max-width: 520px;">
+          Your vault is the personal data store at the center of SelfActual. Every app reads from it and writes to it — which means your Imprint profile, your Atlas assessments, and your Prompter reflections all enrich each other automatically.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl);">
+        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius); padding: var(--space-lg);">
+          <div style="font-size: 1.4rem; margin-bottom: var(--space-sm);">🔒</div>
+          <h3 style="font-size: 1.05rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: var(--space-xs);">Private by default</h3>
+          <p style="color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: none;">Your vault belongs to you. Reflections, session logs, and personal observations stay private unless you explicitly choose to share them.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius); padding: var(--space-lg);">
+          <div style="font-size: 1.4rem; margin-bottom: var(--space-sm);">🔗</div>
+          <h3 style="font-size: 1.05rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: var(--space-xs);">Apps talk to each other</h3>
+          <p style="color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: none;">When Atlas adds an assessment, Imprint can reference it in coaching. When Prompter captures a reflection, it deepens the AI's understanding of you across every app.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius); padding: var(--space-lg);">
+          <div style="font-size: 1.4rem; margin-bottom: var(--space-sm);">🧳</div>
+          <h3 style="font-size: 1.05rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: var(--space-xs);">Portable forever</h3>
+          <p style="color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: none;">Your data is stored in open, standard formats. If you leave SelfActual, your vault — and everything in it — comes with you. No lock-in. No data hostage.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center;">
+        <a href="vault.html" class="btn btn--primary">Learn more about your vault</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pull Quote -->
+  <section class="pullquote">
+    <div class="container">
+      <div class="pullquote__content">
+        <p class="label">The Premise</p>
+        <blockquote>
+          "Your self-knowledge shouldn't be scattered across a dozen apps that each hold a fragment of who you are. It should live in one place you control — and travel with you."
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section>
+    <div class="container">
+      <p class="label">How It Works</p>
+      <h2 style="margin-top: var(--space-xs);">Use the apps. Your vault grows. AI gets smarter.</h2>
+
+      <div class="steps">
+        <div class="step">
+          <h3>Use the tools</h3>
+          <p>Take assessments. Reflect. Have AI conversations. Each interaction adds to your self-knowledge.</p>
+        </div>
+        <div class="step">
+          <h3>Your vault fills up</h3>
+          <p>Everything you create lives in one private, portable place — structured, linked, and always yours.</p>
+        </div>
+        <div class="step">
+          <h3>AI understands you</h3>
+          <p>The more you use it, the better it knows you. Not from surveillance — from the data you chose to give it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Coaches & Teams -->
+  <section class="coaches" style="background: var(--cream-warm); border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04);">
+    <div class="container">
+      <p class="label">For Coaches & Teams</p>
+      <h2 style="margin-top: var(--space-xs);">Better tools for the people who develop people.</h2>
+      <p>
+        Atlas and Imprint help coaches and team leads understand their people — with the team members' permission, on their terms. Assessment data that's persistent, portable, and actually useful beyond the workshop.
+      </p>
+      <a href="#waitlist" class="btn btn--ghost">Join the waitlist as a coach</a>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta-section" id="waitlist">
+    <div class="container">
+      <h2>Interested?</h2>
+      <p>We're building in the open. Join the waitlist and we'll let you know when things are ready.</p>
+      <div class="waitlist">
+        <input type="email" placeholder="your@email.com" aria-label="Email address">
+        <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-tertiary); margin-top: var(--space-sm);">
+        Tell us what interests you most:
+      </p>
+      <div style="display: flex; gap: var(--space-xs); justify-content: center; flex-wrap: wrap; margin-top: var(--space-xs);">
+        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">Imprint</button>
+        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">Atlas</button>
+        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">Prompter</button>
+        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">I'm a Coach</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__left">
+        <img src="logo.png" alt="SelfActual">
+        <span>© 2026 SelfActual</span>
+      </div>
+      <ul class="footer__links">
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    function handleWaitlist(btn) {
+      const input = btn.parentElement.querySelector('input');
+      if (input && input.value && input.value.includes('@')) {
+        btn.textContent = 'You\'re on the list ✓';
+        btn.style.background = 'var(--cyan)';
+        input.disabled = true;
+        btn.disabled = true;
+      }
+    }
+  </script>
 
 </body>
 </html>

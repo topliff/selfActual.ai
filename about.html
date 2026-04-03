@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — SelfActual</title>
+  <meta name="description" content="We're building a home for your self-knowledge. Personal data infrastructure that puts you in control.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav__logo">
+        <img src="logo.png" alt="SelfActual">
+      </a>
+      <button class="nav__toggle" onclick="document.querySelector('.nav__links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html" class="active">About</a></li>
+      </ul>
+      <a href="index.html#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <span class="label fade-up">About SelfActual</span>
+      <h1 class="fade-up fade-up--d1">Your self-knowledge should <span class="gradient-text">belong to you.</span></h1>
+      <p class="fade-up fade-up--d2">
+        We're building personal data infrastructure for the age of AI. A place where your assessments, reflections, and growth data live — owned by you, understood by AI, and useful across every tool you use.
+      </p>
+    </div>
+  </section>
+
+  <!-- The Belief -->
+  <section class="pullquote">
+    <div class="container">
+      <div class="pullquote__content">
+        <p class="label">The Belief</p>
+        <blockquote>
+          Right now, your self-knowledge is scattered. A personality assessment here. A coaching report there. Reflections in a journal. Growth plans in a doc. Each app holds a fragment, and none of them talk to each other. We think there's a better way.
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- What We're Building -->
+  <section>
+    <div class="container">
+      <p class="label">What We're Building</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-md);">A home for your self-knowledge.</h2>
+
+      <div style="max-width: 640px;">
+        <p style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+          SelfActual gives every person a personal vault — a private, portable place where their self-knowledge lives. Assessment results, reflections, AI coaching sessions, growth plans — all structured, all linked, all yours.
+        </p>
+        <p style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+          On top of that vault, we're building apps that make the data useful. Imprint gives AI a persistent understanding of who you are. Atlas brings your assessments together with an AI coach. Prompter turns reflection into structured self-knowledge.
+        </p>
+        <p style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+          The key difference: you own the data. Not us. Not the AI. Not a platform. If you leave SelfActual, your vault comes with you. If you grant a coach access to your assessments, they see exactly what you permit — nothing more.
+        </p>
+        <p style="color: var(--text-secondary);">
+          We operate as a data fiduciary. That's not a marketing term — it's an architectural commitment. The system is built so we can't misuse your data, not just a promise that we won't.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Now -->
+  <section style="background: var(--cream-warm); border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04);">
+    <div class="container">
+      <p class="label">Why Now</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-lg);">Three things changed.</h2>
+
+      <div class="trust__grid">
+        <div class="trust__item">
+          <span class="trust__icon">🤖</span>
+          <h3>AI needs context to be useful</h3>
+          <p>LLMs are powerful, but they start from zero every time. Personal data — structured, linked, owned by the user — is what turns generic AI into genuinely personalized AI.</p>
+        </div>
+        <div class="trust__item">
+          <span class="trust__icon">🌍</span>
+          <h3>Regulation demands data rights</h3>
+          <p>GDPR. The EU AI Act. Growing global consensus that people should own their data and control how AI uses it. SelfActual is architecturally aligned with where regulation is headed.</p>
+        </div>
+        <div class="trust__item">
+          <span class="trust__icon">🔑</span>
+          <h3>The infrastructure finally exists</h3>
+          <p>The Solid protocol — a W3C standard for decentralized personal data — has matured enough to build real products on. We're building those products.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section>
+    <div class="container">
+      <p class="label">The Team</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-sm);">Built by people who care about this.</h2>
+
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="team-member__avatar">B</div>
+          <h3>Brad Topliff</h3>
+          <p>Infrastructure, architecture, product. Building the vault system and platform.</p>
+        </div>
+        <div class="team-member">
+          <div class="team-member__avatar">C</div>
+          <h3>Chris Heuer</h3>
+          <p>Strategy, partnerships, go-to-market. Connecting the ecosystem.</p>
+        </div>
+        <div class="team-member">
+          <div class="team-member__avatar">J</div>
+          <h3>Jeremy Wright</h3>
+          <p>AI persistence design. Creator of the methodology behind Imprint.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Principles -->
+  <section style="background: var(--cream-warm); border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04);">
+    <div class="container">
+      <p class="label">Our Commitments</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-lg);">Things we believe and build around.</h2>
+
+      <div class="principles">
+        <div class="principle">
+          <h3>Users own their data. Period.</h3>
+          <p>Not "we respect your privacy." Not "we won't sell your data." You literally own it. It lives in your vault. We're the custodian, not the owner.</p>
+        </div>
+        <div class="principle">
+          <h3>AI should read your data, not hoard it.</h3>
+          <p>AI gets context from your vault at the moment it needs it — then returns results to your vault. No training on your data. No corporate memory store. Read, use, write back, move on.</p>
+        </div>
+        <div class="principle">
+          <h3>Apps should be useful without lock-in.</h3>
+          <p>Every app writes data to your vault in open, structured formats. Switch apps, keep your data. The vault outlives any individual tool — including ours.</p>
+        </div>
+        <div class="principle">
+          <h3>Trust is structural, not performative.</h3>
+          <p>We don't ask you to trust our privacy policy. We build systems where misuse is architecturally difficult. Fiduciary design means the structure itself protects you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>We're building this in the open.</h2>
+      <p>Join the waitlist and follow along as we go.</p>
+      <a href="index.html#waitlist" class="btn btn--primary">Join the Waitlist</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__left">
+        <img src="logo.png" alt="SelfActual">
+        <span>© 2026 SelfActual</span>
+      </div>
+      <ul class="footer__links">
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

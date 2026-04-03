@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Vault — The home for your self-knowledge | SelfActual</title>
+  <meta name="description" content="A personal, portable data store you own. Your vault connects every SelfActual app and keeps you in control of your data.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="logo.png">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav__logo">
+        <img src="logo.png" alt="SelfActual">
+      </a>
+      <button class="nav__toggle" onclick="document.querySelector('.nav__links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="vault.html" class="active">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+      <a href="index.html#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <span class="label fade-up">Your Vault</span>
+      <h1 class="fade-up fade-up--d1">The home for everything <span class="gradient-text">you know about yourself.</span></h1>
+      <p class="fade-up fade-up--d2">
+        Your vault is a personal data store that belongs to you — not SelfActual, not any app, not any AI company. It's where your assessments, reflections, AI profiles, and growth data live. And it's what makes every SelfActual app smarter together than any of them are alone.
+      </p>
+    </div>
+  </section>
+
+  <!-- The Connector -->
+  <section class="pullquote">
+    <div class="container">
+      <div class="pullquote__content">
+        <p class="label">The Key Idea</p>
+        <blockquote>
+          The vault isn't just storage. It's the connection layer. When Imprint learns how you think, Atlas can use that in coaching. When Atlas captures an assessment, Prompter can offer reflections about it. One vault. Every app enriching the same picture of you.
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- How Apps Connect Through the Vault -->
+  <section>
+    <div class="container">
+      <p class="label">How It Works</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-sm);">Every app reads and writes to your vault.</h2>
+      <p style="color: var(--text-secondary); max-width: 600px; margin-bottom: var(--space-xl);">
+        Traditional apps keep your data in silos. SelfActual apps share a common data layer — your vault. This means each app can build on what the others have contributed, creating a picture of you that no single tool could achieve.
+      </p>
+
+      <!-- Visual: The vault connecting apps -->
+      <div style="background: var(--dark); border-radius: var(--border-radius-lg); padding: var(--space-2xl) var(--space-lg); position: relative; overflow: hidden; margin-bottom: var(--space-xl);">
+        <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(0,229,208,0.06) 0%, transparent 70%);"></div>
+        <div style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
+          <!-- Vault center -->
+          <div style="text-align: center; margin-bottom: var(--space-xl);">
+            <div style="display: inline-flex; align-items: center; gap: var(--space-sm); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--border-radius); padding: var(--space-md) var(--space-lg);">
+              <span style="font-size: 1.6rem;">🔐</span>
+              <div style="text-align: left;">
+                <div style="color: var(--white); font-family: var(--font-display); font-size: 1.2rem;">Your Vault</div>
+                <div style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">Assessments · Reflections · AI Profile · Growth Data</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Apps reading/writing -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md);">
+            <div style="text-align: center;">
+              <div style="color: rgba(255,255,255,0.3); font-size: 0.75rem; margin-bottom: var(--space-xs);">↕ reads & writes</div>
+              <div style="background: rgba(0,229,208,0.1); border: 1px solid rgba(0,229,208,0.2); border-radius: var(--border-radius-sm); padding: var(--space-sm);">
+                <div style="color: var(--cyan); font-weight: 600; font-size: 0.95rem;">Imprint</div>
+                <div style="color: rgba(255,255,255,0.4); font-size: 0.78rem; margin-top: 4px;">Writes your AI profile.<br>Reads assessments for context.</div>
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: rgba(255,255,255,0.3); font-size: 0.75rem; margin-bottom: var(--space-xs);">↕ reads & writes</div>
+              <div style="background: rgba(43,106,255,0.1); border: 1px solid rgba(43,106,255,0.2); border-radius: var(--border-radius-sm); padding: var(--space-sm);">
+                <div style="color: var(--blue); font-weight: 600; font-size: 0.95rem;">Atlas</div>
+                <div style="color: rgba(255,255,255,0.4); font-size: 0.78rem; margin-top: 4px;">Writes assessments.<br>Reads your profile for coaching.</div>
+              </div>
+            </div>
+            <div style="text-align: center;">
+              <div style="color: rgba(255,255,255,0.3); font-size: 0.75rem; margin-bottom: var(--space-xs);">↕ reads & writes</div>
+              <div style="background: rgba(255,179,71,0.1); border: 1px solid rgba(255,179,71,0.2); border-radius: var(--border-radius-sm); padding: var(--space-sm);">
+                <div style="color: var(--amber); font-weight: 600; font-size: 0.95rem;">Prompter</div>
+                <div style="color: rgba(255,255,255,0.4); font-size: 0.78rem; margin-top: 4px;">Writes reflections.<br>Reads assessments for prompts.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Partner apps -->
+          <div style="text-align: center; margin-top: var(--space-lg); padding-top: var(--space-md); border-top: 1px solid rgba(255,255,255,0.06);">
+            <div style="color: rgba(255,255,255,0.3); font-size: 0.75rem; margin-bottom: var(--space-xs);">Partner apps write too ↑</div>
+            <div style="display: inline-flex; gap: var(--space-sm);">
+              <span style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius-sm); padding: 0.4rem 0.8rem; color: rgba(255,255,255,0.4); font-size: 0.8rem;">AllStarTeams</span>
+              <span style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius-sm); padding: 0.4rem 0.8rem; color: rgba(255,255,255,0.3); font-size: 0.8rem;">More coming</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What's In Your Vault -->
+  <section style="background: var(--cream-warm); border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04);">
+    <div class="container">
+      <p class="label">What Lives in Your Vault</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-lg);">Everything that makes up your self-knowledge.</h2>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card__icon card__icon--atlas">📊</div>
+          <h3>Assessments</h3>
+          <p>Star Card scores, StrengthsFinder results, DISC profiles, flow attributes — every assessment you've ever taken, structured and linked.</p>
+        </div>
+        <div class="card">
+          <div class="card__icon card__icon--imprint">🧠</div>
+          <h3>Your AI Profile</h3>
+          <p>How you process information, communicate, make decisions, and what your blind spots are. Written by Imprint, reviewed and controlled by you.</p>
+        </div>
+        <div class="card">
+          <div class="card__icon card__icon--prompter">✍️</div>
+          <h3>Reflections</h3>
+          <p>Guided reflections from Prompter, strength reflections from workshops, final synthesis insights. Your inner work, preserved and private.</p>
+        </div>
+      </div>
+
+      <div class="cards" style="margin-top: var(--space-md);">
+        <div class="card">
+          <div class="card__icon" style="background: linear-gradient(135deg, rgba(107,99,255,0.12), rgba(107,99,255,0.04)); color: #6B63FF;">💬</div>
+          <h3>Session History</h3>
+          <p>Summaries of AI coaching conversations — decisions made, open questions, next steps. A running record of your growth work.</p>
+        </div>
+        <div class="card">
+          <div class="card__icon" style="background: linear-gradient(135deg, rgba(255,107,84,0.12), rgba(255,107,84,0.04)); color: var(--coral);">📋</div>
+          <h3>Growth Plans</h3>
+          <p>Goals, development areas, and progress tracking — connected to the assessments and reflections that informed them.</p>
+        </div>
+        <div class="card">
+          <div class="card__icon" style="background: linear-gradient(135deg, rgba(0,0,0,0.08), rgba(0,0,0,0.03)); color: var(--text-secondary);">📜</div>
+          <h3>Provenance</h3>
+          <p>A complete audit trail. What was written, when, and by which app. Full transparency over everything in your vault.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Permission Model -->
+  <section>
+    <div class="container">
+      <p class="label">Permissions</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-md);">You decide who sees what.</h2>
+
+      <div class="feature-block" style="border-top: none; padding-top: 0;">
+        <div class="feature-block__content">
+          <h2>Private by default.</h2>
+          <p>
+            Your reflections, session logs, and personal observations are private — always. They live in your vault and no app, coach, or teammate can see them unless you explicitly grant access.
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.92rem;">
+            This isn't a setting you have to remember to turn on. Privacy is the default. Sharing is the deliberate act.
+          </p>
+        </div>
+        <div class="feature-block__visual">
+          <div class="feature-block__visual-placeholder">
+            Permission controls
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-block__content">
+          <h2>Share what you choose.</h2>
+          <p>
+            Want your coach to see your assessment results? Grant them read access to assessments — not reflections, not session history, not your AI profile. Granular, explicit, revocable.
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.92rem;">
+            When you share assessments with a team lead, they see the scores and the framework context. They never see what you reflected on privately or what you discussed with your AI coach.
+          </p>
+        </div>
+        <div class="feature-block__visual">
+          <div class="feature-block__visual-placeholder">
+            Sharing controls
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-block">
+        <div class="feature-block__content">
+          <h2>Portable. Open. Yours.</h2>
+          <p>
+            Your vault uses open, standard data formats. Not a proprietary database. Not a platform-locked store. If you leave SelfActual, export your vault and take everything with you.
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.92rem;">
+            We operate as a data fiduciary — a custodian with structural obligations to you, similar to how a bank holds your assets. The architecture itself prevents misuse, not just a policy.
+          </p>
+        </div>
+        <div class="feature-block__visual">
+          <div class="feature-block__visual-placeholder">
+            Data portability
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Compound Effect -->
+  <section style="background: var(--cream-warm); border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04);">
+    <div class="container">
+      <p class="label">The Compound Effect</p>
+      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-md);">Each app makes the others better.</h2>
+      <p style="color: var(--text-secondary); max-width: 600px; margin-bottom: var(--space-lg);">
+        Because every app reads from and writes to your vault, your self-knowledge compounds. Here's what that looks like in practice:
+      </p>
+
+      <div style="max-width: 640px;">
+        <div style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-sm) var(--space-md); align-items: start;">
+          
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(0,229,208,0.12); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #00A89A; font-weight: 600; margin-top: 2px;">1</div>
+          <div style="padding-bottom: var(--space-md); border-bottom: 1px solid rgba(0,0,0,0.06);">
+            <p style="font-weight: 600; margin-bottom: 4px; max-width: none;">You take a strengths assessment through AllStarTeams.</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: none;">Your Star Card scores and flow attributes are written to your vault automatically.</p>
+          </div>
+
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(43,106,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--blue); font-weight: 600; margin-top: 2px;">2</div>
+          <div style="padding-bottom: var(--space-md); border-bottom: 1px solid rgba(0,0,0,0.06);">
+            <p style="font-weight: 600; margin-bottom: 4px; max-width: none;">Atlas reads those results and starts an AI coaching conversation.</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: none;">The coaching is grounded in your actual scores — not generic advice. It knows your Thinking score is 78 and your dominant quadrant is Feeling.</p>
+          </div>
+
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,179,71,0.15); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #C08020; font-weight: 600; margin-top: 2px;">3</div>
+          <div style="padding-bottom: var(--space-md); border-bottom: 1px solid rgba(0,0,0,0.06);">
+            <p style="font-weight: 600; margin-bottom: 4px; max-width: none;">Prompter offers you a reflection prompt based on your assessment.</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: none;">"How does your Thinking strength show up in your daily work?" Your written reflection is saved to the vault.</p>
+          </div>
+
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(0,229,208,0.12); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #00A89A; font-weight: 600; margin-top: 2px;">4</div>
+          <div>
+            <p style="font-weight: 600; margin-bottom: 4px; max-width: none;">Imprint reads your assessment, your reflection, and your coaching session.</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: none;">Now it knows not just your scores, but how you think about them, what you struggle with, and what you're working on. Every future conversation is richer.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Your self-knowledge deserves<br>a real home.</h2>
+      <p>Not a database someone else controls. A vault that belongs to you.</p>
+      <a href="index.html#waitlist" class="btn btn--primary">Join the Waitlist</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__left">
+        <img src="logo.png" alt="SelfActual">
+        <span>© 2026 SelfActual</span>
+      </div>
+      <ul class="footer__links">
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>
