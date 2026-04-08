@@ -189,10 +189,15 @@
         <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
       </div>
       <div class="waitlist-details" style="display: none; max-width: 440px; margin: var(--space-md) auto 0;">
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">
-          Anything you'd like us to know? (optional)
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-sm);">
+          Tell us a bit about yourself
         </p>
-        <textarea placeholder="What brought you here, what you're hoping to use, your role..." aria-label="Additional details" style="width: 100%; min-height: 80px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--stone); border-radius: var(--border-radius); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xs);">
+          <input type="text" name="firstName" placeholder="First name" aria-label="First name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
+          <input type="text" name="lastName" placeholder="Last name" aria-label="Last name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
+        </div>
+        <input type="text" name="company" placeholder="Company" aria-label="Company" style="width: 100%; margin-top: var(--space-xs); padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
+        <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details" style="width: 100%; margin-top: var(--space-xs); min-height: 80px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--stone); border-radius: var(--border-radius); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
         <button class="btn btn--primary" onclick="handleDetails(this)" style="margin-top: var(--space-xs); width: 100%;">Send</button>
       </div>
     </div>
@@ -271,11 +276,13 @@
 
     async function handleDetails(btn) {
       const container = btn.parentElement;
-      const textarea = container.querySelector('textarea');
-      const details = textarea.value.trim();
+      const firstName = (container.querySelector('[name="firstName"]').value || '').trim();
+      const lastName = (container.querySelector('[name="lastName"]').value || '').trim();
+      const company = (container.querySelector('[name="company"]').value || '').trim();
+      const details = (container.querySelector('[name="details"]').value || '').trim();
       const pageId = container.dataset.pageId;
 
-      if (!details || !pageId) {
+      if (!pageId || (!firstName && !lastName && !company && !details)) {
         container.style.display = 'none';
         return;
       }
@@ -287,7 +294,7 @@
         const res = await fetch(WAITLIST_API, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pageId, details }),
+          body: JSON.stringify({ pageId, firstName, lastName, company, details }),
         });
 
         if (res.ok) {

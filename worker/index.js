@@ -65,10 +65,22 @@ async function handleCreate(request, env) {
 
 async function handleUpdate(request, env) {
   try {
-    const { pageId, details } = await request.json();
+    const { pageId, firstName, lastName, company, details } = await request.json();
 
-    if (!pageId || !details) {
-      return Response.json({ error: 'pageId and details required' }, { status: 400, headers: CORS_HEADERS });
+    if (!pageId) {
+      return Response.json({ error: 'pageId required' }, { status: 400, headers: CORS_HEADERS });
+    }
+
+    const properties = {};
+    if (firstName) properties['First Name'] = { rich_text: [{ text: { content: firstName } }] };
+    if (lastName) properties['Last Name'] = { rich_text: [{ text: { content: lastName } }] };
+    if (company) properties['Company'] = { rich_text: [{ text: { content: company } }] };
+    if (details) properties['Details'] = { rich_text: [{ text: { content: details } }] };
+
+    // Also update the Name/title to use real name if provided
+    if (firstName || lastName) {
+      const fullName = [firstName, lastName].filter(Boolean).join(' ');
+      properties['Name'] = { title: [{ text: { content: fullName } }] };
     }
 
     const res = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
@@ -78,11 +90,7 @@ async function handleUpdate(request, env) {
         'Notion-Version': '2022-06-28',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        properties: {
-          Details: { rich_text: [{ text: { content: details } }] },
-        },
-      }),
+      body: JSON.stringify({ properties }),
     });
 
     if (!res.ok) {
