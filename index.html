@@ -300,7 +300,7 @@
         if (res.ok) {
           btn.textContent = 'Thanks!';
           btn.style.background = 'var(--cyan)';
-          textarea.disabled = true;
+          container.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
         } else {
           btn.textContent = 'Something went wrong';
           btn.style.background = 'var(--coral)';
