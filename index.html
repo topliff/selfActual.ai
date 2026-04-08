@@ -261,6 +261,7 @@
           if (details) {
             details.style.display = 'block';
             details.dataset.pageId = data.pageId;
+            details.dataset.email = email;
           }
         } else {
           btn.textContent = 'Something went wrong';
@@ -294,7 +295,7 @@
         const res = await fetch(WAITLIST_API, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pageId, firstName, lastName, company, details }),
+          body: JSON.stringify({ pageId, email: container.dataset.email, firstName, lastName, company, details }),
         });
 
         if (res.ok) {
