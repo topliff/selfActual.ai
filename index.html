@@ -192,10 +192,10 @@
         Tell us what interests you most:
       </p>
       <div style="display: flex; gap: var(--space-xs); justify-content: center; flex-wrap: wrap; margin-top: var(--space-xs);">
-        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">Imprint</button>
-        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">Atlas</button>
-        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">Prompter</button>
-        <button class="btn btn--secondary" style="font-size: 0.8rem; padding: 0.5rem 1rem;" onclick="this.style.borderColor='var(--blue)'; this.style.color='var(--blue)'">I'm a Coach</button>
+        <button class="btn btn--secondary interest-btn" data-interest="Imprint" style="font-size: 0.8rem; padding: 0.5rem 1rem;">Imprint</button>
+        <button class="btn btn--secondary interest-btn" data-interest="Atlas" style="font-size: 0.8rem; padding: 0.5rem 1rem;">Atlas</button>
+        <button class="btn btn--secondary interest-btn" data-interest="Prompter" style="font-size: 0.8rem; padding: 0.5rem 1rem;">Prompter</button>
+        <button class="btn btn--secondary interest-btn" data-interest="Coach" style="font-size: 0.8rem; padding: 0.5rem 1rem;">I'm a Coach</button>
       </div>
     </div>
   </section>
@@ -217,15 +217,64 @@
   </footer>
 
   <script>
-    function handleWaitlist(btn) {
-      const input = btn.parentElement.querySelector('input');
-      if (input && input.value && input.value.includes('@')) {
-        btn.textContent = 'You\'re on the list ✓';
-        btn.style.background = 'var(--cyan)';
-        input.disabled = true;
-        btn.disabled = true;
+    const WAITLIST_API = 'https://selfactual-waitlist.selfactual.workers.dev';
+
+    async function handleWaitlist(btn) {
+      const container = btn.parentElement;
+      const input = container.querySelector('input');
+      const email = input ? input.value.trim() : '';
+
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = 'var(--coral)';
+        input.setAttribute('placeholder', 'Please enter a valid email');
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.setAttribute('placeholder', 'your@email.com');
+        }, 2000);
+        return;
+      }
+
+      // Collect selected interests
+      const interests = [];
+      document.querySelectorAll('.interest-btn.selected').forEach(b => {
+        interests.push(b.dataset.interest);
+      });
+
+      // Determine source from which form was used
+      const source = container.closest('#waitlist-hero') ? 'Hero' : 'Footer';
+
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(WAITLIST_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, interests, source }),
+        });
+
+        if (res.ok) {
+          btn.textContent = 'You\u2019re on the list \u2713';
+          btn.style.background = 'var(--cyan)';
+          input.disabled = true;
+        } else {
+          btn.textContent = 'Something went wrong';
+          btn.style.background = 'var(--coral)';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        btn.textContent = 'Something went wrong';
+        btn.style.background = 'var(--coral)';
+        btn.disabled = false;
       }
     }
+
+    // Interest button toggle
+    document.querySelectorAll('.interest-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
+      });
+    });
   </script>
 
 </body>
