@@ -666,6 +666,45 @@ section {
   line-height: 1.7;
 }
 
+/* --- Prose (long-form content) --- */
+.prose {
+  max-width: var(--max-width-text);
+}
+
+.prose h2 {
+  font-size: 1.2rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-xs);
+}
+
+.prose p {
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: var(--space-sm);
+}
+
+.prose ul {
+  color: var(--text-secondary);
+  line-height: 1.75;
+  margin-bottom: var(--space-sm);
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin-bottom: 0.35rem;
+}
+
+.prose a {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
 /* --- Feature Blocks (sub-pages) --- */
 .feature-block {
   display: grid;
