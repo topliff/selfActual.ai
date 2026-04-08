@@ -188,14 +188,12 @@
         <input type="email" placeholder="your@email.com" aria-label="Email address">
         <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
       </div>
-      <p style="font-size: 0.82rem; color: var(--text-tertiary); margin-top: var(--space-sm);">
-        Tell us what interests you most:
-      </p>
-      <div style="display: flex; gap: var(--space-xs); justify-content: center; flex-wrap: wrap; margin-top: var(--space-xs);">
-        <button class="btn btn--secondary interest-btn" data-interest="Imprint" style="font-size: 0.8rem; padding: 0.5rem 1rem;">Imprint</button>
-        <button class="btn btn--secondary interest-btn" data-interest="Atlas" style="font-size: 0.8rem; padding: 0.5rem 1rem;">Atlas</button>
-        <button class="btn btn--secondary interest-btn" data-interest="Prompter" style="font-size: 0.8rem; padding: 0.5rem 1rem;">Prompter</button>
-        <button class="btn btn--secondary interest-btn" data-interest="Coach" style="font-size: 0.8rem; padding: 0.5rem 1rem;">I'm a Coach</button>
+      <div class="waitlist-details" style="display: none; max-width: 440px; margin: var(--space-md) auto 0;">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-xs);">
+          Anything you'd like us to know? (optional)
+        </p>
+        <textarea placeholder="What brought you here, what you're hoping to use, your role..." aria-label="Additional details" style="width: 100%; min-height: 80px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--stone); border-radius: var(--border-radius); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
+        <button class="btn btn--primary" onclick="handleDetails(this)" style="margin-top: var(--space-xs); width: 100%;">Send</button>
       </div>
     </div>
   </section>
@@ -234,13 +232,6 @@
         return;
       }
 
-      // Collect selected interests
-      const interests = [];
-      document.querySelectorAll('.interest-btn.selected').forEach(b => {
-        interests.push(b.dataset.interest);
-      });
-
-      // Determine source from which form was used
       const source = container.closest('#waitlist-hero') ? 'Hero' : 'Footer';
 
       btn.textContent = 'Sending...';
@@ -250,13 +241,22 @@
         const res = await fetch(WAITLIST_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, interests, source }),
+          body: JSON.stringify({ email, source }),
         });
+
+        const data = await res.json();
 
         if (res.ok) {
           btn.textContent = 'You\u2019re on the list \u2713';
           btn.style.background = 'var(--cyan)';
           input.disabled = true;
+
+          // Show the details follow-up
+          const details = container.parentElement.querySelector('.waitlist-details');
+          if (details) {
+            details.style.display = 'block';
+            details.dataset.pageId = data.pageId;
+          }
         } else {
           btn.textContent = 'Something went wrong';
           btn.style.background = 'var(--coral)';
@@ -269,12 +269,42 @@
       }
     }
 
-    // Interest button toggle
-    document.querySelectorAll('.interest-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        btn.classList.toggle('selected');
-      });
-    });
+    async function handleDetails(btn) {
+      const container = btn.parentElement;
+      const textarea = container.querySelector('textarea');
+      const details = textarea.value.trim();
+      const pageId = container.dataset.pageId;
+
+      if (!details || !pageId) {
+        container.style.display = 'none';
+        return;
+      }
+
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(WAITLIST_API, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pageId, details }),
+        });
+
+        if (res.ok) {
+          btn.textContent = 'Thanks!';
+          btn.style.background = 'var(--cyan)';
+          textarea.disabled = true;
+        } else {
+          btn.textContent = 'Something went wrong';
+          btn.style.background = 'var(--coral)';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        btn.textContent = 'Something went wrong';
+        btn.style.background = 'var(--coral)';
+        btn.disabled = false;
+      }
+    }
   </script>
 
 </body>

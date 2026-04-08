@@ -280,12 +280,6 @@ section {
   color: var(--blue);
 }
 
-.interest-btn.selected {
-  border-color: var(--blue);
-  color: var(--blue);
-  background: rgba(43, 106, 255, 0.06);
-}
-
 .btn--ghost {
   background: transparent;
   color: var(--blue);
