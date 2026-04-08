@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — SelfActual</title>
+  <meta name="description" content="Get in touch with the SelfActual team. Questions, feedback, investor interest, or partnership inquiries welcome.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="images/favicon.png">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="container">
+      <a href="index.html" class="nav__logo">
+        <img src="images/selfactual_logo.png" alt="SelfActual">
+      </a>
+      <button class="nav__toggle" onclick="document.querySelector('.nav__links').classList.toggle('open')" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav__links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+      <a href="index.html#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
+    </div>
+  </nav>
+
+  <!-- Contact Form -->
+  <section class="hero" style="padding-bottom: var(--space-2xl);">
+    <div class="container" style="max-width: var(--max-width-narrow);">
+      <p class="label fade-up">Get in Touch</p>
+      <h1 class="fade-up fade-up--d1">Contact us</h1>
+      <p class="hero__subtitle fade-up fade-up--d2">
+        Questions, feedback, investor interest, partnership ideas — we'd love to hear from you.
+      </p>
+
+      <form id="contact-form" class="contact-form fade-up fade-up--d3" onsubmit="handleContact(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xs);">
+          <input type="text" name="name" placeholder="Your name" aria-label="Your name">
+          <input type="email" name="email" placeholder="your@email.com" aria-label="Email address" required>
+        </div>
+        <select name="category" aria-label="Category">
+          <option value="">What's this about?</option>
+          <option value="General">General question</option>
+          <option value="Support">Support</option>
+          <option value="Investor">Investor interest</option>
+          <option value="Partnership">Partnership</option>
+          <option value="Other">Other</option>
+        </select>
+        <textarea name="message" placeholder="Your message" aria-label="Message" required></textarea>
+        <button type="submit" class="btn btn--primary" style="width: 100%;">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__left">
+        <img src="images/selfactual_logo.png" alt="SelfActual">
+        <span>© 2026 SelfActual</span>
+      </div>
+      <ul class="footer__links">
+        <li><a href="vault.html">Your Vault</a></li>
+        <li><a href="imprint.html">Imprint</a></li>
+        <li><a href="atlas.html">Atlas</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    const CONTACT_API = 'https://selfactual-waitlist.selfactual.workers.dev/contact';
+
+    async function handleContact(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('button[type="submit"]');
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const category = form.category.value;
+      const message = form.message.value.trim();
+
+      if (!email || !email.includes('@')) return;
+      if (!message) return;
+
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(CONTACT_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, category, message }),
+        });
+
+        if (res.ok) {
+          btn.textContent = 'Message sent \u2713';
+          btn.style.background = 'var(--cyan)';
+          form.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+        } else {
+          btn.textContent = 'Something went wrong';
+          btn.style.background = 'var(--coral)';
+          btn.disabled = false;
+        }
+      } catch (err) {
+        btn.textContent = 'Something went wrong';
+        btn.style.background = 'var(--coral)';
+        btn.disabled = false;
+      }
+    }
+  </script>
+
+</body>
+</html>

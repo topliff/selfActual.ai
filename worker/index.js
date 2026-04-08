@@ -1,4 +1,5 @@
-const NOTION_DB_ID = '930544000a334dc4b6288b08b70b9a67';
+const WAITLIST_DB_ID = '930544000a334dc4b6288b08b70b9a67';
+const CONTACT_DB_ID = 'b66b7666586548279f5d58d8c9b287ac';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -10,6 +11,12 @@ export default {
   async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
+    }
+
+    const url = new URL(request.url);
+
+    if (url.pathname === '/contact' && request.method === 'POST') {
+      return handleContact(request, env, ctx);
     }
 
     if (request.method === 'POST') return handleCreate(request, env, ctx);
@@ -44,7 +51,7 @@ async function handleCreate(request, env, ctx) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        parent: { database_id: NOTION_DB_ID },
+        parent: { database_id: WAITLIST_DB_ID },
         properties,
       }),
     });
@@ -57,7 +64,6 @@ async function handleCreate(request, env, ctx) {
 
     const data = await res.json();
 
-    // Notify Slack in the background
     ctx.waitUntil(
       fetch(env.SLACK_WEBHOOK, {
         method: 'POST',
@@ -89,7 +95,6 @@ async function handleUpdate(request, env, ctx) {
     if (company) properties['Company'] = { rich_text: [{ text: { content: company } }] };
     if (details) properties['Details'] = { rich_text: [{ text: { content: details } }] };
 
-    // Also update the Name/title to use real name if provided
     if (firstName || lastName) {
       const fullName = [firstName, lastName].filter(Boolean).join(' ');
       properties['Name'] = { title: [{ text: { content: fullName } }] };
@@ -111,7 +116,6 @@ async function handleUpdate(request, env, ctx) {
       return Response.json({ error: 'Failed to update' }, { status: 500, headers: CORS_HEADERS });
     }
 
-    // Notify Slack with updated details
     const parts = [];
     if (firstName || lastName) parts.push(`*Name:* ${[firstName, lastName].filter(Boolean).join(' ')}`);
     if (company) parts.push(`*Company:* ${company}`);
@@ -127,6 +131,65 @@ async function handleUpdate(request, env, ctx) {
         }).catch(() => {})
       );
     }
+
+    return Response.json({ success: true }, { headers: CORS_HEADERS });
+  } catch (e) {
+    console.error('Worker error:', e);
+    return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
+  }
+}
+
+async function handleContact(request, env, ctx) {
+  try {
+    const { name, email, category, message } = await request.json();
+
+    if (!email || !email.includes('@')) {
+      return Response.json({ error: 'Valid email required' }, { status: 400, headers: CORS_HEADERS });
+    }
+    if (!message) {
+      return Response.json({ error: 'Message required' }, { status: 400, headers: CORS_HEADERS });
+    }
+
+    const properties = {
+      Name: { title: [{ text: { content: name || email } }] },
+      Email: { email: email },
+      Message: { rich_text: [{ text: { content: message } }] },
+    };
+
+    if (category) {
+      properties.Category = { select: { name: category } };
+    }
+
+    const res = await fetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${env.NOTION_TOKEN}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        parent: { database_id: CONTACT_DB_ID },
+        properties,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('Notion API error:', err);
+      return Response.json({ error: 'Failed to save' }, { status: 500, headers: CORS_HEADERS });
+    }
+
+    ctx.waitUntil(
+      fetch(env.SLACK_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: `New contact form submission from *${name || email}*` +
+            (category ? ` [${category}]` : '') +
+            `:\n${message}`,
+        }),
+      }).catch(() => {})
+    );
 
     return Response.json({ success: true }, { headers: CORS_HEADERS });
   } catch (e) {

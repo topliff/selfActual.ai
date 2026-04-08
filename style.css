@@ -327,6 +327,59 @@ section {
   color: var(--text-tertiary);
 }
 
+/* --- Contact Form --- */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-width: 540px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.contact-form input,
+.contact-form select,
+.contact-form textarea {
+  padding: 0.85rem 1.2rem;
+  border: 1.5px solid var(--stone);
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.contact-form textarea {
+  border-radius: var(--border-radius);
+  min-height: 120px;
+  resize: vertical;
+}
+
+.contact-form select {
+  color: var(--text-tertiary);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A7A8A' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.2rem center;
+  padding-right: 2.5rem;
+}
+
+.contact-form select:has(option:checked:not([value=""])) {
+  color: var(--text-primary);
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: var(--cyan);
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
 /* --- Cards --- */
 .cards {
   display: grid;
