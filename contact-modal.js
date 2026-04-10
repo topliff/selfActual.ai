@@ -80,7 +80,7 @@ async function handleContact(e) {
         btn.textContent = 'Send Message';
         btn.style.background = '';
         btn.disabled = false;
-      }, 1200);
+      }, 2000);
     } else {
       btn.textContent = 'Something went wrong';
       btn.style.background = 'var(--coral)';
