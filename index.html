@@ -303,6 +303,7 @@
           btn.textContent = 'Thanks!';
           btn.style.background = 'var(--cyan)';
           container.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
+          setTimeout(() => { container.style.display = 'none'; }, 1200);
         } else {
           btn.textContent = 'Something went wrong';
           btn.style.background = 'var(--coral)';

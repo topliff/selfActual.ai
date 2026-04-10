@@ -73,6 +73,14 @@ async function handleContact(e) {
       btn.textContent = 'Message sent \u2713';
       btn.style.background = 'var(--cyan)';
       form.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+      setTimeout(() => {
+        closeContactModal();
+        form.reset();
+        form.querySelectorAll('input, select, textarea').forEach(el => el.disabled = false);
+        btn.textContent = 'Send Message';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 1200);
     } else {
       btn.textContent = 'Something went wrong';
       btn.style.background = 'var(--coral)';
