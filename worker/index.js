@@ -21,12 +21,13 @@ export default {
     }
 
     if (request.method === 'POST') return handleCreate(request, env, ctx);
+    if (request.method === 'PATCH') return handleUpdate(request, env, ctx);
 
     return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS });
   },
 };
 
-// Debug endpoint — test token presence and Intercom connection
+// Debug endpoint
 async function handleDebug(env) {
   const results = {
     hasIntercomToken: !!env.INTERCOM_TOKEN,
@@ -83,7 +84,6 @@ async function handleCreate(request, env, ctx) {
     }
 
     // Intercom contact creation
-    let intercomResult = null;
     if (env.INTERCOM_TOKEN) {
       ctx.waitUntil(
         (async () => {
@@ -101,6 +101,63 @@ async function handleCreate(request, env, ctx) {
     }
 
     return Response.json({ success: true, email }, { headers: CORS_HEADERS });
+  } catch (e) {
+    console.error('Worker error:', e);
+    return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
+  }
+}
+
+// Waitlist details update — update Intercom contact with name/company
+async function handleUpdate(request, env, ctx) {
+  try {
+    const { email, firstName, lastName, company, details } = await request.json();
+
+    if (!email) {
+      return Response.json({ error: 'email required' }, { status: 400, headers: CORS_HEADERS });
+    }
+
+    const fullName = [firstName, lastName].filter(Boolean).join(' ');
+    const customAttributes = {};
+    if (company) customAttributes.company = company;
+    if (details) customAttributes.details = details;
+
+    // Slack notification
+    if (env.SLACK_WEBHOOK) {
+      const parts = [];
+      if (fullName) parts.push(`*Name:* ${fullName}`);
+      if (company) parts.push(`*Company:* ${company}`);
+      if (details) parts.push(`*Details:* ${details}`);
+      if (parts.length > 0) {
+        ctx.waitUntil(
+          fetch(env.SLACK_WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              text: `Waitlist update for *${email}*:\n${parts.join('\n')}`,
+            }),
+          }).catch((e) => console.error('Slack error:', e.message))
+        );
+      }
+    }
+
+    // Update Intercom contact
+    if (env.INTERCOM_TOKEN) {
+      ctx.waitUntil(
+        (async () => {
+          try {
+            await upsertIntercomContact(env, {
+              email,
+              name: fullName || undefined,
+              customAttributes,
+            });
+          } catch (e) {
+            console.error('Intercom update error:', e.message);
+          }
+        })()
+      );
+    }
+
+    return Response.json({ success: true }, { headers: CORS_HEADERS });
   } catch (e) {
     console.error('Worker error:', e);
     return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
@@ -187,7 +244,6 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
 
   const headers = intercomHeaders(env);
 
-  // Search for existing contact
   const searchRes = await fetch(`${INTERCOM_API}/contacts/search`, {
     method: 'POST',
     headers,
@@ -213,7 +269,6 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
     body.custom_attributes = customAttributes;
   }
 
-  // Update existing or create new
   if (contactId) {
     const res = await fetch(`${INTERCOM_API}/contacts/${contactId}`, {
       method: 'PUT',
