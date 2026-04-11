@@ -3,7 +3,7 @@ const CONTACT_DB_ID = 'b66b7666586548279f5d58d8c9b287ac';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, PATCH, OPTIONS',
+  'Access-Control-Allow-Methods': 'POST, PATCH, GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
@@ -15,6 +15,11 @@ export default {
 
     const url = new URL(request.url);
 
+    // Debug endpoint — test Intercom connection
+    if (url.pathname === '/debug' && request.method === 'GET') {
+      return handleDebug(env);
+    }
+
     if (url.pathname === '/contact' && request.method === 'POST') {
       return handleContact(request, env, ctx);
     }
@@ -25,6 +30,40 @@ export default {
     return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS });
   },
 };
+
+async function handleDebug(env) {
+  const results = {
+    hasIntercomToken: !!env.INTERCOM_TOKEN,
+    tokenLength: env.INTERCOM_TOKEN ? env.INTERCOM_TOKEN.length : 0,
+    tokenPrefix: env.INTERCOM_TOKEN ? env.INTERCOM_TOKEN.substring(0, 8) + '...' : 'NOT SET',
+    hasNotionToken: !!env.NOTION_TOKEN,
+    hasSlackWebhook: !!env.SLACK_WEBHOOK,
+    intercomApiTest: null,
+  };
+
+  if (env.INTERCOM_TOKEN) {
+    try {
+      const res = await fetch('https://api.intercom.io/me', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${env.INTERCOM_TOKEN}`,
+          'Accept': 'application/json',
+          'Intercom-Version': '2.11',
+        },
+      });
+      const body = await res.text();
+      results.intercomApiTest = {
+        status: res.status,
+        ok: res.ok,
+        body: body.substring(0, 500),
+      };
+    } catch (e) {
+      results.intercomApiTest = { error: e.message };
+    }
+  }
+
+  return Response.json(results, { headers: CORS_HEADERS });
+}
 
 async function handleCreate(request, env, ctx) {
   try {
@@ -74,11 +113,19 @@ async function handleCreate(request, env, ctx) {
       }).catch(() => {})
     );
 
+    // Intercom — run inline so we can log results
     ctx.waitUntil(
-      upsertIntercomContact(env, {
-        email,
-        customAttributes: source ? { source } : {},
-      }).catch((e) => console.error('Intercom waitlist error:', e))
+      (async () => {
+        try {
+          const contactId = await upsertIntercomContact(env, {
+            email,
+            customAttributes: source ? { source } : {},
+          });
+          console.log('Intercom waitlist result:', contactId ? `contact ${contactId}` : 'failed');
+        } catch (e) {
+          console.error('Intercom waitlist error:', e.message, e.stack);
+        }
+      })()
     );
 
     return Response.json({ success: true, pageId: data.id }, { headers: CORS_HEADERS });
@@ -145,11 +192,17 @@ async function handleUpdate(request, env, ctx) {
       if (company) customAttributes.company = company;
       if (details) customAttributes.details = details;
       ctx.waitUntil(
-        upsertIntercomContact(env, {
-          email,
-          name: fullName || undefined,
-          customAttributes,
-        }).catch((e) => console.error('Intercom waitlist update error:', e))
+        (async () => {
+          try {
+            await upsertIntercomContact(env, {
+              email,
+              name: fullName || undefined,
+              customAttributes,
+            });
+          } catch (e) {
+            console.error('Intercom waitlist update error:', e.message);
+          }
+        })()
       );
     }
 
@@ -214,18 +267,22 @@ async function handleContact(request, env, ctx) {
 
     ctx.waitUntil(
       (async () => {
-        const contactId = await upsertIntercomContact(env, {
-          email,
-          name: name || undefined,
-          customAttributes: category ? { category } : {},
-        });
-        if (contactId) {
-          await createIntercomConversation(env, {
-            contactId,
-            body: message,
+        try {
+          const contactId = await upsertIntercomContact(env, {
+            email,
+            name: name || undefined,
+            customAttributes: category ? { category } : {},
           });
+          if (contactId) {
+            await createIntercomConversation(env, {
+              contactId,
+              body: message,
+            });
+          }
+        } catch (e) {
+          console.error('Intercom contact error:', e.message, e.stack);
         }
-      })().catch((e) => console.error('Intercom contact error:', e))
+      })()
     );
 
     return Response.json({ success: true }, { headers: CORS_HEADERS });
@@ -270,7 +327,8 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
       contactId = searchData.data[0].id;
     }
   } else {
-    console.error('Intercom search failed:', await searchRes.text());
+    const errText = await searchRes.text();
+    console.error('Intercom search failed:', searchRes.status, errText);
   }
 
   const body = { role, email };
@@ -286,7 +344,8 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      console.error('Intercom update failed:', await res.text());
+      const errText = await res.text();
+      console.error('Intercom update failed:', res.status, errText);
     }
     return contactId;
   }
@@ -297,7 +356,8 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
     body: JSON.stringify(body),
   });
   if (!res.ok) {
-    console.error('Intercom create failed:', await res.text());
+    const errText = await res.text();
+    console.error('Intercom create failed:', res.status, errText);
     return null;
   }
   const data = await res.json();
@@ -315,6 +375,7 @@ async function createIntercomConversation(env, { contactId, body }) {
     }),
   });
   if (!res.ok) {
-    console.error('Intercom conversation failed:', await res.text());
+    const errText = await res.text();
+    console.error('Intercom conversation failed:', res.status, errText);
   }
 }
