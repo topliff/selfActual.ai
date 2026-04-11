@@ -1,6 +1,3 @@
-const WAITLIST_DB_ID = '930544000a334dc4b6288b08b70b9a67';
-const CONTACT_DB_ID = 'b66b7666586548279f5d58d8c9b287ac';
-
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, PATCH, GET, OPTIONS',
@@ -15,7 +12,6 @@ export default {
 
     const url = new URL(request.url);
 
-    // Debug endpoint — test Intercom connection
     if (url.pathname === '/debug' && request.method === 'GET') {
       return handleDebug(env);
     }
@@ -25,18 +21,17 @@ export default {
     }
 
     if (request.method === 'POST') return handleCreate(request, env, ctx);
-    if (request.method === 'PATCH') return handleUpdate(request, env, ctx);
 
     return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS });
   },
 };
 
+// Debug endpoint — test token presence and Intercom connection
 async function handleDebug(env) {
   const results = {
     hasIntercomToken: !!env.INTERCOM_TOKEN,
     tokenLength: env.INTERCOM_TOKEN ? env.INTERCOM_TOKEN.length : 0,
     tokenPrefix: env.INTERCOM_TOKEN ? env.INTERCOM_TOKEN.substring(0, 8) + '...' : 'NOT SET',
-    hasNotionToken: !!env.NOTION_TOKEN,
     hasSlackWebhook: !!env.SLACK_WEBHOOK,
     intercomApiTest: null,
   };
@@ -65,6 +60,7 @@ async function handleDebug(env) {
   return Response.json(results, { headers: CORS_HEADERS });
 }
 
+// Waitlist signup — Slack + Intercom
 async function handleCreate(request, env, ctx) {
   try {
     const { email, source } = await request.json();
@@ -73,134 +69,90 @@ async function handleCreate(request, env, ctx) {
       return Response.json({ error: 'Valid email required' }, { status: 400, headers: CORS_HEADERS });
     }
 
-    const properties = {
-      Name: { title: [{ text: { content: email } }] },
-      Email: { email: email },
-    };
-
-    if (source) {
-      properties.Source = { select: { name: source } };
+    // Slack notification
+    if (env.SLACK_WEBHOOK) {
+      ctx.waitUntil(
+        fetch(env.SLACK_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: `New waitlist signup: *${email}*` + (source ? ` (${source})` : ''),
+          }),
+        }).catch((e) => console.error('Slack error:', e.message))
+      );
     }
 
-    const res = await fetch('https://api.notion.com/v1/pages', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.NOTION_TOKEN}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        parent: { database_id: WAITLIST_DB_ID },
-        properties,
-      }),
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      console.error('Notion API error:', err);
-      return Response.json({ error: 'Failed to save' }, { status: 500, headers: CORS_HEADERS });
+    // Intercom contact creation
+    let intercomResult = null;
+    if (env.INTERCOM_TOKEN) {
+      ctx.waitUntil(
+        (async () => {
+          try {
+            const contactId = await upsertIntercomContact(env, {
+              email,
+              customAttributes: source ? { source } : {},
+            });
+            console.log('Intercom waitlist result:', contactId ? `contact ${contactId}` : 'failed');
+          } catch (e) {
+            console.error('Intercom waitlist error:', e.message, e.stack);
+          }
+        })()
+      );
     }
 
-    const data = await res.json();
-
-    ctx.waitUntil(
-      fetch(env.SLACK_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: `New waitlist signup: *${email}*` + (source ? ` (${source})` : ''),
-        }),
-      }).catch(() => {})
-    );
-
-    // Intercom — run inline so we can log results
-    ctx.waitUntil(
-      (async () => {
-        try {
-          const contactId = await upsertIntercomContact(env, {
-            email,
-            customAttributes: source ? { source } : {},
-          });
-          console.log('Intercom waitlist result:', contactId ? `contact ${contactId}` : 'failed');
-        } catch (e) {
-          console.error('Intercom waitlist error:', e.message, e.stack);
-        }
-      })()
-    );
-
-    return Response.json({ success: true, pageId: data.id }, { headers: CORS_HEADERS });
+    return Response.json({ success: true, email }, { headers: CORS_HEADERS });
   } catch (e) {
     console.error('Worker error:', e);
     return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
   }
 }
 
-async function handleUpdate(request, env, ctx) {
+// Contact form — Slack + Intercom (with conversation)
+async function handleContact(request, env, ctx) {
   try {
-    const { pageId, email, firstName, lastName, company, details } = await request.json();
+    const { name, email, category, message } = await request.json();
 
-    if (!pageId) {
-      return Response.json({ error: 'pageId required' }, { status: 400, headers: CORS_HEADERS });
+    if (!email || !email.includes('@')) {
+      return Response.json({ error: 'Valid email required' }, { status: 400, headers: CORS_HEADERS });
+    }
+    if (!message) {
+      return Response.json({ error: 'Message required' }, { status: 400, headers: CORS_HEADERS });
     }
 
-    const properties = {};
-    if (firstName) properties['First Name'] = { rich_text: [{ text: { content: firstName } }] };
-    if (lastName) properties['Last Name'] = { rich_text: [{ text: { content: lastName } }] };
-    if (company) properties['Company'] = { rich_text: [{ text: { content: company } }] };
-    if (details) properties['Details'] = { rich_text: [{ text: { content: details } }] };
-
-    if (firstName || lastName) {
-      const fullName = [firstName, lastName].filter(Boolean).join(' ');
-      properties['Name'] = { title: [{ text: { content: fullName } }] };
-    }
-
-    const res = await fetch(`https://api.notion.com/v1/pages/${pageId}`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${env.NOTION_TOKEN}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ properties }),
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      console.error('Notion API error:', err);
-      return Response.json({ error: 'Failed to update' }, { status: 500, headers: CORS_HEADERS });
-    }
-
-    const parts = [];
-    if (firstName || lastName) parts.push(`*Name:* ${[firstName, lastName].filter(Boolean).join(' ')}`);
-    if (company) parts.push(`*Company:* ${company}`);
-    if (details) parts.push(`*Details:* ${details}`);
-    if (parts.length > 0) {
+    // Slack notification
+    if (env.SLACK_WEBHOOK) {
       ctx.waitUntil(
         fetch(env.SLACK_WEBHOOK, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            text: `Waitlist update for *${email || 'unknown'}*:\n${parts.join('\n')}`,
+            text: `New contact form submission from *${name || email}*` +
+              (category ? ` [${category}]` : '') +
+              `:\n${message}`,
           }),
-        }).catch(() => {})
+        }).catch((e) => console.error('Slack error:', e.message))
       );
     }
 
-    if (email) {
-      const fullName = [firstName, lastName].filter(Boolean).join(' ');
-      const customAttributes = {};
-      if (company) customAttributes.company = company;
-      if (details) customAttributes.details = details;
+    // Intercom contact + conversation
+    if (env.INTERCOM_TOKEN) {
       ctx.waitUntil(
         (async () => {
           try {
-            await upsertIntercomContact(env, {
+            const contactId = await upsertIntercomContact(env, {
               email,
-              name: fullName || undefined,
-              customAttributes,
+              name: name || undefined,
+              customAttributes: category ? { category } : {},
             });
+            if (contactId) {
+              await createIntercomConversation(env, {
+                contactId,
+                body: message,
+              });
+              console.log('Intercom contact+conversation created:', contactId);
+            }
           } catch (e) {
-            console.error('Intercom waitlist update error:', e.message);
+            console.error('Intercom contact error:', e.message, e.stack);
           }
         })()
       );
@@ -213,84 +165,7 @@ async function handleUpdate(request, env, ctx) {
   }
 }
 
-async function handleContact(request, env, ctx) {
-  try {
-    const { name, email, category, message } = await request.json();
-
-    if (!email || !email.includes('@')) {
-      return Response.json({ error: 'Valid email required' }, { status: 400, headers: CORS_HEADERS });
-    }
-    if (!message) {
-      return Response.json({ error: 'Message required' }, { status: 400, headers: CORS_HEADERS });
-    }
-
-    const properties = {
-      Name: { title: [{ text: { content: name || email } }] },
-      Email: { email: email },
-      Message: { rich_text: [{ text: { content: message } }] },
-    };
-
-    if (category) {
-      properties.Category = { select: { name: category } };
-    }
-
-    const res = await fetch('https://api.notion.com/v1/pages', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${env.NOTION_TOKEN}`,
-        'Notion-Version': '2022-06-28',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        parent: { database_id: CONTACT_DB_ID },
-        properties,
-      }),
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      console.error('Notion API error:', err);
-      return Response.json({ error: 'Failed to save' }, { status: 500, headers: CORS_HEADERS });
-    }
-
-    ctx.waitUntil(
-      fetch(env.SLACK_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text: `New contact form submission from *${name || email}*` +
-            (category ? ` [${category}]` : '') +
-            `:\n${message}`,
-        }),
-      }).catch(() => {})
-    );
-
-    ctx.waitUntil(
-      (async () => {
-        try {
-          const contactId = await upsertIntercomContact(env, {
-            email,
-            name: name || undefined,
-            customAttributes: category ? { category } : {},
-          });
-          if (contactId) {
-            await createIntercomConversation(env, {
-              contactId,
-              body: message,
-            });
-          }
-        } catch (e) {
-          console.error('Intercom contact error:', e.message, e.stack);
-        }
-      })()
-    );
-
-    return Response.json({ success: true }, { headers: CORS_HEADERS });
-  } catch (e) {
-    console.error('Worker error:', e);
-    return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
-  }
-}
+// --- Intercom API ---
 
 const INTERCOM_API = 'https://api.intercom.io';
 const INTERCOM_VERSION = '2.11';
@@ -312,6 +187,7 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
 
   const headers = intercomHeaders(env);
 
+  // Search for existing contact
   const searchRes = await fetch(`${INTERCOM_API}/contacts/search`, {
     method: 'POST',
     headers,
@@ -337,6 +213,7 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
     body.custom_attributes = customAttributes;
   }
 
+  // Update existing or create new
   if (contactId) {
     const res = await fetch(`${INTERCOM_API}/contacts/${contactId}`, {
       method: 'PUT',
