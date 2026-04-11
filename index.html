@@ -62,18 +62,6 @@
         <input type="email" placeholder="your@email.com" aria-label="Email address">
         <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
       </div>
-      <div class="waitlist-details fade-up" style="display: none; max-width: 440px; margin: var(--space-md) auto 0;">
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-sm);">
-          Tell us a bit about yourself
-        </p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xs);">
-          <input type="text" name="firstName" placeholder="First name" aria-label="First name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-          <input type="text" name="lastName" placeholder="Last name" aria-label="Last name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-        </div>
-        <input type="text" name="company" placeholder="Company" aria-label="Company" style="width: 100%; margin-top: var(--space-xs); padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-        <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details" style="width: 100%; margin-top: var(--space-xs); min-height: 80px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--stone); border-radius: var(--border-radius); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
-        <button class="btn btn--primary" onclick="handleDetails(this)" style="margin-top: var(--space-xs); width: 100%;">Send</button>
-      </div>
     </div>
   </section>
 
@@ -208,18 +196,6 @@
         <input type="email" placeholder="your@email.com" aria-label="Email address">
         <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
       </div>
-      <div class="waitlist-details" style="display: none; max-width: 440px; margin: var(--space-md) auto 0;">
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-sm);">
-          Tell us a bit about yourself
-        </p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xs);">
-          <input type="text" name="firstName" placeholder="First name" aria-label="First name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-          <input type="text" name="lastName" placeholder="Last name" aria-label="Last name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-        </div>
-        <input type="text" name="company" placeholder="Company" aria-label="Company" style="width: 100%; margin-top: var(--space-xs); padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-        <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details" style="width: 100%; margin-top: var(--space-xs); min-height: 80px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--stone); border-radius: var(--border-radius); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
-        <button class="btn btn--primary" onclick="handleDetails(this)" style="margin-top: var(--space-xs); width: 100%;">Send</button>
-      </div>
     </div>
   </section>
 
@@ -273,59 +249,10 @@
           body: JSON.stringify({ email, source }),
         });
 
-        const data = await res.json();
-
         if (res.ok) {
           btn.textContent = 'You\u2019re on the list \u2713';
           btn.style.background = 'var(--cyan)';
           input.disabled = true;
-
-          const details = container.parentElement.querySelector('.waitlist-details');
-          if (details) {
-            details.style.display = 'block';
-            details.dataset.pageId = data.pageId;
-            details.dataset.email = email;
-          }
-        } else {
-          btn.textContent = 'Something went wrong';
-          btn.style.background = 'var(--coral)';
-          btn.disabled = false;
-        }
-      } catch (e) {
-        btn.textContent = 'Something went wrong';
-        btn.style.background = 'var(--coral)';
-        btn.disabled = false;
-      }
-    }
-
-    async function handleDetails(btn) {
-      const container = btn.parentElement;
-      const firstName = (container.querySelector('[name="firstName"]').value || '').trim();
-      const lastName = (container.querySelector('[name="lastName"]').value || '').trim();
-      const company = (container.querySelector('[name="company"]').value || '').trim();
-      const details = (container.querySelector('[name="details"]').value || '').trim();
-      const pageId = container.dataset.pageId;
-
-      if (!pageId || (!firstName && !lastName && !company && !details)) {
-        container.style.display = 'none';
-        return;
-      }
-
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-
-      try {
-        const res = await fetch(WAITLIST_API, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pageId, email: container.dataset.email, firstName, lastName, company, details }),
-        });
-
-        if (res.ok) {
-          btn.textContent = 'Thanks!';
-          btn.style.background = 'var(--cyan)';
-          container.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
-          setTimeout(() => { container.style.display = 'none'; }, 1200);
         } else {
           btn.textContent = 'Something went wrong';
           btn.style.background = 'var(--coral)';
