@@ -97,7 +97,7 @@ async function handleContact(e) {
 // Loads the Intercom chat widget on every page.
 // App ID: pj52grij
 window.intercomSettings = {
-  api_base: "https://api-ius.intercom.io",
+  api_base: "https://api-iam.intercom.io",
   app_id: "pj52grij"
 };
 
