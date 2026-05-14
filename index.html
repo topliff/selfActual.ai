@@ -258,11 +258,23 @@
       btn.textContent = 'Sending...';
       btn.disabled = true;
 
+      let firstTouch = {};
+      try { firstTouch = JSON.parse(localStorage.getItem('sa_first_touch') || '{}'); } catch (e) {}
+
+      const payload = {
+        email,
+        source,
+        ...firstTouch,
+        current_url: window.location.href,
+        screen_width: window.screen.width,
+        tz_client: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+
       try {
         const res = await fetch(WAITLIST_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, source }),
+          body: JSON.stringify(payload),
         });
 
         if (res.ok) {

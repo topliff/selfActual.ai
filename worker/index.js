@@ -64,21 +64,31 @@ async function handleDebug(env) {
 // Waitlist signup — Slack + Intercom
 async function handleCreate(request, env, ctx) {
   try {
-    const { email, source } = await request.json();
+    const body = await request.json();
+    const { email, source } = body;
 
     if (!email || !email.includes('@')) {
       return Response.json({ error: 'Valid email required' }, { status: 400, headers: CORS_HEADERS });
     }
 
+    const telemetry = extractTelemetry(request, body);
+
     // Slack notification
     if (env.SLACK_WEBHOOK) {
+      const geo = [telemetry.city, telemetry.region, telemetry.country].filter(Boolean).join(', ');
+      const lines = [`New waitlist signup: *${email}*` + (source ? ` (${source})` : '')];
+      if (geo) lines.push(`📍 ${geo}` + (telemetry.asn_org ? ` — ${telemetry.asn_org}` : ''));
+      if (telemetry.utm_source) {
+        const utmParts = [telemetry.utm_source, telemetry.utm_medium, telemetry.utm_campaign].filter(Boolean);
+        lines.push(`🔗 ${utmParts.join(' / ')}`);
+      }
+      if (telemetry.referrer) lines.push(`↩︎ Referrer: ${telemetry.referrer}`);
+      if (telemetry.landing_url) lines.push(`🚪 Landing: ${telemetry.landing_url}`);
       ctx.waitUntil(
         fetch(env.SLACK_WEBHOOK, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: `New waitlist signup: *${email}*` + (source ? ` (${source})` : ''),
-          }),
+          body: JSON.stringify({ text: lines.join('\n') }),
         }).catch((e) => console.error('Slack error:', e.message))
       );
     }
@@ -88,9 +98,11 @@ async function handleCreate(request, env, ctx) {
       ctx.waitUntil(
         (async () => {
           try {
+            const customAttributes = { ...telemetry };
+            if (source) customAttributes.source = source;
             const contactId = await upsertIntercomContact(env, {
               email,
-              customAttributes: source ? { source } : {},
+              customAttributes,
             });
             console.log('Intercom waitlist result:', contactId ? `contact ${contactId}` : 'failed');
           } catch (e) {
@@ -105,6 +117,47 @@ async function handleCreate(request, env, ctx) {
     console.error('Worker error:', e);
     return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
   }
+}
+
+// Pull request telemetry from Cloudflare + headers + client-sent body fields.
+// Returns a flat object suitable for Intercom custom_attributes (nulls stripped).
+function extractTelemetry(request, body) {
+  const cf = request.cf || {};
+  const h = request.headers;
+  const raw = {
+    country: cf.country,
+    region: cf.region,
+    city: cf.city,
+    postal_code: cf.postalCode,
+    timezone: cf.timezone,
+    continent: cf.continent,
+    latitude: cf.latitude,
+    longitude: cf.longitude,
+    ip: h.get('CF-Connecting-IP'),
+    asn: cf.asn,
+    asn_org: cf.asOrganization,
+    user_agent: h.get('User-Agent'),
+    accept_language: h.get('Accept-Language'),
+    http_protocol: cf.httpProtocol,
+    tls_version: cf.tlsVersion,
+    landing_url: body.landing_url,
+    landing_path: body.landing_path,
+    referrer: body.referrer,
+    utm_source: body.utm_source,
+    utm_medium: body.utm_medium,
+    utm_campaign: body.utm_campaign,
+    utm_content: body.utm_content,
+    utm_term: body.utm_term,
+    first_seen_at: body.first_seen_at,
+    current_url: body.current_url,
+    screen_width: body.screen_width,
+    client_timezone: body.tz_client,
+  };
+  const out = {};
+  for (const [k, v] of Object.entries(raw)) {
+    if (v !== null && v !== undefined && v !== '') out[k] = v;
+  }
+  return out;
 }
 
 // Waitlist details update — update Intercom contact with name/company
