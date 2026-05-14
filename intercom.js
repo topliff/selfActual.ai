@@ -50,3 +50,7 @@ window.intercomSettings = {
     else{w.addEventListener('load',l,false);}
   }
 })();
+
+// Belt-and-suspenders: re-assert hide after widget boots, in case a workspace
+// setting or stale cache tried to show the launcher.
+window.Intercom('update', { hide_default_launcher: true });
