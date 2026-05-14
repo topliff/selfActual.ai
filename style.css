@@ -464,6 +464,13 @@ section {
   font-size: 1.4rem;
 }
 
+.card__icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
 .card__icon--imprint {
   background: linear-gradient(135deg, rgba(0,229,208,0.12), rgba(0,229,208,0.04));
   color: #00C4B4;
@@ -474,9 +481,19 @@ section {
   color: var(--blue);
 }
 
-.card__icon--prompter {
+.card__icon--currents {
   background: linear-gradient(135deg, rgba(255,179,71,0.15), rgba(255,179,71,0.05));
   color: #E09A30;
+}
+
+.card__icon--wisdom {
+  background: linear-gradient(135deg, rgba(255,107,84,0.14), rgba(255,107,84,0.04));
+  color: var(--coral);
+}
+
+.card__icon--vault {
+  background: linear-gradient(135deg, rgba(13,13,26,0.10), rgba(13,13,26,0.03));
+  color: var(--dark);
 }
 
 .card h3 {
