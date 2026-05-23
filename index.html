@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SelfActual — AI that actually knows you</title>
-  <meta name="description" content="Tools for understanding yourself better — powered by AI that remembers, learns, and belongs to you.">
-  <link rel="stylesheet" href="style.css">
+  <meta name="description" content="The self-knowledge layer for the AI era. Private vaults that make every AI agent actually personal.">
+  <title>selfActual — The self-knowledge layer for the AI era</title>
   <link rel="icon" type="image/png" href="images/favicon.png">
 
   <!-- Google tag (gtag.js) -->
@@ -19,357 +18,1053 @@
 
   <!-- Intercom (launcher hidden — tracking only) -->
   <script src="intercom.js?v=2"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sa-blue: #16b1df;
+      --sa-blue-soft: rgba(22,177,223,0.08);
+      --imprint-purple: #7C3AED;
+      --atlas-green: #10B981;
+      --coral: #e5484d;
+      --cyan: #10B981;
+      --navy: #0a1628;
+      --navy-mid: #0e1a2b;
+      --white: #f8f9fa;
+      --off-white: #f1f3f5;
+      --g100: #e9ecef; --g200: #dee2e6; --g300: #ced4da;
+      --g400: #adb5bd; --g500: #868e96; --g600: #6c757d; --g700: #495057;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', -apple-system, sans-serif;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans); background: var(--white); color: var(--navy);
+      overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---- MODE SYSTEM ---- */
+    .mode-exp, .mode-arch { transition: opacity 0.45s ease, transform 0.35s ease; }
+    body.arch .mode-exp { display: none; }
+    body.exp  .mode-arch { display: none; }
+    body.exp  .mode-exp  { display: block; }
+    body.arch .mode-arch { display: block; }
+
+    /* ---- NAV ---- */
+    nav {
+      position: fixed; top:0; left:0; right:0; z-index:100;
+      padding: 1.15rem 3rem; display: flex; justify-content: space-between; align-items: center;
+      background: rgba(248,249,250,0.92); backdrop-filter: blur(24px);
+      border-bottom: 1px solid transparent; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    nav.scrolled { border-bottom-color: var(--g200); box-shadow: 0 1px 10px rgba(10,22,40,0.04); }
+    .nav-logo {
+      font-family: var(--sans); font-weight:600; font-size:0.82rem;
+      letter-spacing:0.2em; text-transform:uppercase; color: var(--navy); text-decoration:none;
+    }
+    .nav-logo span { color: var(--sa-blue); }
+    .nav-right { display: flex; align-items: center; gap: 2rem; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      font-size:0.85rem; font-weight:400; color: var(--g700);
+      text-decoration:none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--sa-blue); }
+    .nav-cta {
+      background: var(--sa-blue)!important; color: white!important;
+      padding: 0.5rem 1.3rem; border-radius:4px; font-weight:500!important;
+      transition: background 0.2s!important;
+    }
+    .nav-cta:hover { background:#1299c4!important; }
+
+    /* ---- MODE TOGGLE ---- */
+    .mode-toggle {
+      display: flex; align-items: center;
+      border: 1px solid var(--g300); border-radius: 4px; overflow: hidden;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.05em;
+      cursor: pointer; user-select: none;
+    }
+    .mode-toggle button {
+      padding: 0.45rem 0.9rem; border: none; background: transparent;
+      font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
+      color: var(--g500); cursor: pointer; transition: all 0.25s;
+      letter-spacing: 0.03em;
+    }
+    .mode-toggle button.active {
+      background: var(--navy); color: white;
+    }
+
+    /* ---- SHARED SECTION STYLES ---- */
+    section { padding: 7rem 3rem; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .dark { background: var(--navy-mid); color: var(--white); }
+
+    .section-label {
+      font-size:0.72rem; font-weight:500; letter-spacing:0.18em;
+      text-transform:uppercase; color: var(--sa-blue); margin-bottom:2rem;
+    }
+    .section-label::before { content:'— '; }
+
+    .hl {
+      font-family: var(--serif); font-weight:400; line-height:1.18;
+      max-width:820px; margin-bottom:1.5rem;
+    }
+    .hl-hero { font-size: clamp(2.6rem, 6vw, 4.8rem); line-height:1.1; max-width:850px; margin-bottom:2rem; }
+    .hl-section { font-size: clamp(2rem, 4.2vw, 3.4rem); }
+    .hl em { font-style:italic; color: var(--sa-blue); }
+
+    .body-text {
+      font-size:1.05rem; font-weight:300; line-height:1.8;
+      color: var(--g600); max-width:560px;
+    }
+    .dark .body-text { color: rgba(255,255,255,0.6); }
+
+    /* ---- HERO ---- */
+    .hero {
+      padding: 11rem 3rem 5rem; min-height:100vh;
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    .hero-sub {
+      font-size:1.12rem; font-weight:300; line-height:1.75;
+      color: var(--g600); max-width:500px; margin-bottom:2.5rem;
+    }
+    .hero-actions { display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap; }
+    .btn-primary {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      background: var(--sa-blue); color:white;
+      padding:0.85rem 1.9rem; border-radius:4px;
+      font-family: var(--sans); font-size:0.92rem; font-weight:500;
+      text-decoration:none; border:none; cursor:pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background:#1299c4; transform:translateY(-1px); }
+    .btn-primary::after { content:' →'; }
+    .hero-status {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      font-size:0.73rem; color: var(--g500);
+    }
+    .status-dot {
+      width:7px; height:7px; border-radius:50%; background: var(--atlas-green);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+    /* ---- STATS BAR ---- */
+    .stats-bar { padding:0 3rem; }
+    .stats-grid {
+      display:grid; grid-template-columns:repeat(4,1fr);
+      border-top:1px solid var(--g200); border-bottom:1px solid var(--g200);
+    }
+    .stat {
+      padding:1.4rem 1.4rem 1.4rem 0;
+      border-right:1px solid var(--g200);
+    }
+    .stat:last-child { border-right:none; }
+    .stat:not(:first-child) { padding-left:1.4rem; }
+    .stat-label {
+      font-size:0.6rem; font-weight:500; letter-spacing:0.14em;
+      text-transform:uppercase; color: var(--g400); margin-bottom:0.35rem;
+    }
+    .stat-value { font-family: var(--serif); font-size:1.05rem; }
+
+    /* ---- COMPARE COLS ---- */
+    .compare {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:3rem; margin-top:2.5rem;
+    }
+    .compare-col h3 {
+      font-size:0.66rem; font-weight:600; letter-spacing:0.18em;
+      text-transform:uppercase; padding-bottom:0.7rem; margin-bottom:1.2rem;
+      border-bottom:2px solid var(--g200);
+    }
+    .compare-col h3.them { color: var(--g400); }
+    .compare-col h3.us { color: var(--sa-blue); }
+    .compare-col p { font-size:0.97rem; line-height:1.75; color: var(--g600); }
+    .dark .compare-col h3 { border-bottom-color: rgba(255,255,255,0.12); }
+    .dark .compare-col p { color: rgba(255,255,255,0.6); }
+
+    /* ---- PULL QUOTE ---- */
+    .pull-quote { text-align:center; padding:5rem 3rem; }
+    .pq-line { width:48px; height:2px; background: var(--sa-blue); margin:0 auto 2.5rem; }
+    .pull-quote blockquote {
+      font-family: var(--serif); font-style:italic;
+      font-size: clamp(1.5rem,3vw,2.4rem); line-height:1.35;
+      color: var(--navy); max-width:720px; margin:0 auto;
+    }
+
+    /* ---- THREE GRID ---- */
+    .three-grid {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      border:1px solid var(--g200); margin-top:2.5rem;
+    }
+    .grid-cell {
+      padding:2.2rem; border-right:1px solid var(--g200);
+    }
+    .grid-cell:last-child { border-right:none; }
+    .grid-cell-num {
+      font-size:0.6rem; font-weight:500; letter-spacing:0.12em;
+      text-transform:uppercase; color: var(--g400); margin-bottom:1.2rem;
+    }
+    .row-label {
+      font-size:0.56rem; font-weight:600; letter-spacing:0.12em;
+      text-transform:uppercase; margin-bottom:0.1rem;
+    }
+    .row-label.them { color: var(--g400); }
+    .row-label.us { color: var(--sa-blue); }
+    .grid-cell h4 {
+      font-family: var(--serif); font-size:1.08rem; font-weight:400;
+      margin-bottom:0.7rem;
+    }
+    .grid-cell h4.faded { color: var(--g400); }
+
+    /* ---- PILLARS (dark) ---- */
+    .pillars {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      border:1px solid rgba(255,255,255,0.1); margin-top:2.5rem;
+    }
+    .pillar {
+      padding:2.2rem; border-right:1px solid rgba(255,255,255,0.1);
+    }
+    .pillar:last-child { border-right:none; }
+    .pillar-num {
+      display:inline-block; font-size:0.56rem; font-weight:600;
+      letter-spacing:0.08em; color: var(--navy-mid); background: var(--sa-blue);
+      padding:0.15rem 0.45rem; border-radius:2px; margin-bottom:0.7rem;
+    }
+    .pillar h4 { font-family: var(--serif); font-size:1.12rem; color:var(--white); margin-bottom:0.55rem; }
+    .pillar p { font-size:0.86rem; line-height:1.65; color:rgba(255,255,255,0.5); }
+
+    /* ---- APP CARDS ---- */
+    .apps-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2.5rem;
+    }
+    .app-card {
+      border:1px solid var(--g200); padding:2.4rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .app-card:hover { border-color: var(--sa-blue); box-shadow:0 4px 20px rgba(22,177,223,0.07); }
+    .app-badge {
+      display:inline-block; font-size:0.56rem; font-weight:600;
+      letter-spacing:0.12em; text-transform:uppercase;
+      padding:0.2rem 0.55rem; border-radius:2px; margin-bottom:1.1rem;
+    }
+    .app-badge.live { background:rgba(16,185,129,0.1); color: var(--atlas-green); }
+    .app-badge.soon { background: var(--sa-blue-soft); color: var(--sa-blue); }
+    .app-card h3 { font-family: var(--serif); font-size:1.5rem; font-weight:400; margin-bottom:0.65rem; }
+    .app-card p { font-size:0.93rem; line-height:1.7; color: var(--g600); }
+    .app-icon { height:40px; margin-bottom:1rem; display:block; }
+
+    /* ---- ARCHITECTURE DIAGRAM ---- */
+    .arch-diagram {
+      display:flex; align-items:center; justify-content:center;
+      gap:1.5rem; margin:3rem 0; flex-wrap:wrap;
+    }
+    .arch-node {
+      text-align:center; padding:1.6rem 2rem;
+      border:1px solid var(--g200); min-width:170px;
+    }
+    .arch-node h4 { font-family: var(--serif); font-size:1.02rem; margin-bottom:0.3rem; }
+    .arch-node p { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color: var(--g400); }
+    .arch-bridge {
+      display:flex; flex-direction:column; align-items:center; gap:0.3rem;
+    }
+    .arch-bridge span {
+      font-size:0.56rem; font-weight:600; letter-spacing:0.14em;
+      text-transform:uppercase; color: var(--sa-blue);
+    }
+    .arch-bridge-line {
+      width:56px; height:2px;
+      background:linear-gradient(90deg, var(--sa-blue), var(--imprint-purple));
+    }
+
+    /* ---- IMAGINE GRID (dark) ---- */
+    .imagine-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:2.5rem;
+    }
+    .imagine-card {
+      border-top:1px solid rgba(255,255,255,0.1); padding-top:1.6rem;
+    }
+    .imagine-card h4 {
+      font-size:0.66rem; font-weight:600; letter-spacing:0.15em;
+      text-transform:uppercase; color: var(--sa-blue); margin-bottom:0.65rem;
+    }
+    .imagine-card p { font-size:0.93rem; line-height:1.7; color:rgba(255,255,255,0.6); }
+
+    /* ---- TRUST ---- */
+    .trust-layout {
+      display:grid; grid-template-columns:1fr 1fr; gap:4rem;
+      margin-top:2.5rem; align-items:start;
+    }
+    .trust-analogy {
+      border-left:3px solid var(--sa-blue); padding-left:1.4rem; margin-bottom:1.5rem;
+    }
+    .trust-analogy p {
+      font-family: var(--serif); font-style:italic;
+      font-size:1.08rem; line-height:1.6; color: var(--navy);
+    }
+    .trust-text p {
+      font-size:0.93rem; line-height:1.75; color: var(--g600); margin-bottom:0.85rem;
+    }
+    .trust-list { list-style:none; }
+    .trust-list li {
+      font-size:0.88rem; line-height:1.6; color: var(--g600);
+      padding:0.45rem 0 0.45rem 1.2rem; position:relative;
+    }
+    .trust-list li::before {
+      content:''; position:absolute; left:0; top:0.95rem;
+      width:6px; height:2px; background: var(--sa-blue);
+    }
+
+    /* ---- TEAM ---- */
+    .team-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem; margin-top:2.5rem; }
+    .team-card { border-top:2px solid var(--sa-blue); padding-top:1.4rem; }
+    .team-card h3 { font-family: var(--serif); font-size:1.3rem; margin-bottom:0.15rem; }
+    .team-card .role {
+      font-size:0.66rem; font-weight:500; letter-spacing:0.12em;
+      text-transform:uppercase; color: var(--sa-blue); margin-bottom:0.65rem;
+    }
+    .team-card p { font-size:0.88rem; line-height:1.65; color: var(--g600); }
+
+    /* ---- BOOK ---- */
+    .book-layout {
+      display:grid; grid-template-columns:0.8fr 1fr;
+      gap:4rem; align-items:center; margin-top:3rem;
+    }
+    .book-cover-wrap { display:flex; justify-content:center; }
+    .book-cover {
+      width:100%; max-width:360px; height:auto;
+      filter: drop-shadow(0 28px 45px rgba(10,22,40,0.22));
+      transition: transform 0.45s ease;
+    }
+    .book-cover:hover { transform: translateY(-8px) rotate(-1.2deg); }
+    .book-title { font-family: var(--serif); font-size: clamp(2.1rem,4vw,2.9rem); line-height:1.05; margin-bottom:0.45rem; }
+    .book-subtitle {
+      font-family: var(--serif); font-style:italic; font-size:1.12rem;
+      line-height:1.4; color: var(--g600); margin-bottom:1.3rem;
+    }
+    .book-byline { font-size:0.82rem; letter-spacing:0.03em; color: var(--g500); margin-bottom:1.6rem; }
+    .book-byline em { font-style:italic; color: var(--sa-blue); }
+    .book-desc {
+      font-size:1rem; font-weight:300; line-height:1.8;
+      color: var(--g600); max-width:520px; margin-bottom:1.9rem;
+    }
+    .book-desc strong { font-weight:500; color: var(--navy); font-style:italic; }
+    .book-actions { display:flex; align-items:center; gap:1.4rem; flex-wrap:wrap; }
+    .book-status {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color: var(--g500);
+    }
+    .book-status .status-dot { background: var(--sa-blue); }
+    .book-link { font-size:0.9rem; font-weight:500; color: var(--sa-blue); text-decoration:none; }
+    .book-link::after { content:' →'; }
+    .book-link:hover { text-decoration:underline; }
+
+    /* ---- FINAL CTA ---- */
+    .final-cta {
+      text-align:center; background: var(--navy-mid);
+      color: var(--white); padding:7rem 3rem;
+    }
+    .final-cta .hl { margin:0 auto 1rem; text-align:center; }
+    .final-cta .sub { color:rgba(255,255,255,0.5); margin-bottom:2.5rem; font-size:1rem; }
+
+    /* ---- WAITLIST FORM (ported from main site) ---- */
+    .waitlist {
+      display:flex; gap:0.6rem; max-width:460px; margin:0 auto;
+      flex-wrap:wrap; justify-content:center;
+    }
+    .waitlist input[type="email"] {
+      flex:1 1 240px; padding:0.85rem 1.2rem;
+      border:1px solid rgba(255,255,255,0.22); border-radius:4px;
+      background:rgba(255,255,255,0.06); color:var(--white);
+      font-family:var(--sans); font-size:0.95rem; outline:none;
+      transition:border-color 0.2s;
+    }
+    .waitlist input[type="email"]:focus { border-color:var(--sa-blue); }
+    .waitlist input[type="email"]::placeholder { color:rgba(255,255,255,0.4); }
+    .waitlist-details { max-width:460px; margin:1.25rem auto 0; text-align:left; }
+    .waitlist-details .wd-label { font-size:0.9rem; color:rgba(255,255,255,0.6); margin-bottom:0.75rem; }
+    .waitlist-details .wd-row { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+    .waitlist-details input, .waitlist-details textarea {
+      width:100%; padding:0.75rem 1rem; margin-top:0.6rem;
+      border:1px solid rgba(255,255,255,0.22); border-radius:4px;
+      background:rgba(255,255,255,0.06); color:var(--white);
+      font-family:var(--sans); font-size:0.9rem; outline:none;
+    }
+    .waitlist-details .wd-row input { margin-top:0; }
+    .waitlist-details input:focus, .waitlist-details textarea:focus { border-color:var(--sa-blue); }
+    .waitlist-details input::placeholder, .waitlist-details textarea::placeholder { color:rgba(255,255,255,0.4); }
+    .waitlist-details textarea { min-height:80px; resize:vertical; }
+    .waitlist-details .btn-primary { margin-top:0.75rem; width:100%; justify-content:center; }
+    /* form submit buttons don't get the nav arrow */
+    .waitlist .btn-primary::after, .waitlist-details .btn-primary::after { content:none; }
+
+    /* ---- FOOTER ---- */
+    footer {
+      padding:2.5rem 3rem; border-top:1px solid var(--g200);
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .footer-copy { font-size:0.76rem; color: var(--g400); }
+    .footer-nav { display:flex; gap:1.5rem; }
+    .footer-nav a { font-size:0.76rem; color: var(--g400); text-decoration:none; transition:color 0.2s; }
+    .footer-nav a:hover { color: var(--navy); }
+
+    /* ---- REVEAL ANIMATION ---- */
+    .rv { opacity:0; transform:translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .rv.vis { opacity:1; transform:translateY(0); }
+
+    /* ---- RESPONSIVE ---- */
+    @media(max-width:768px) {
+      nav { padding:1rem 1.25rem; }
+      .nav-links a:not(.nav-cta) { display:none; }
+      .nav-right { gap:0.75rem; }
+      .mode-toggle button { padding:0.4rem 0.6rem; font-size:0.65rem; }
+      section { padding:4.5rem 1.5rem; }
+      .hero { padding:7.5rem 1.5rem 3rem; min-height:auto; }
+      .stats-bar { padding:0 1.5rem; }
+      .stats-grid { grid-template-columns:1fr 1fr; }
+      .stat:nth-child(2) { border-right:none; }
+      .stat:nth-child(3),.stat:nth-child(4) { border-top:1px solid var(--g200); }
+      .compare, .imagine-grid, .trust-layout, .apps-grid { grid-template-columns:1fr; }
+      .book-layout { grid-template-columns:1fr; gap:2.5rem; }
+      .three-grid, .pillars, .team-grid { grid-template-columns:1fr; }
+      .grid-cell,.pillar { border-right:none!important; border-bottom:1px solid var(--g200); }
+      .dark .grid-cell,.pillar { border-bottom-color:rgba(255,255,255,0.1); }
+      .grid-cell:last-child,.pillar:last-child { border-bottom:none; }
+      .arch-diagram { flex-direction:column; }
+      .arch-bridge-line { width:2px; height:36px; }
+      footer { flex-direction:column; gap:0.75rem; text-align:center; }
+      .pull-quote { padding:3rem 1.5rem; }
+    }
+  </style>
 </head>
-<body>
+<body class="exp">
 
-  <!-- Navigation -->
-  <nav class="nav">
-    <div class="container">
-      <a href="index.html" class="nav__logo">
-        <img src="images/selfactual_logo.png" alt="SelfActual">
-      </a>
-      <button class="nav__toggle" onclick="document.querySelector('.nav__links').classList.toggle('open')" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav__links">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="vault.html">Your Vault</a></li>
-        <li><a href="imprint.html">Imprint</a></li>
-        <li><a href="atlas.html">Atlas</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
-      <a href="#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <a href="#" class="nav-logo"><img src="https://selfactual.ai/images/selfactual_logo.png" alt="selfActual" style="height:28px;"></a>
+  <div class="nav-right">
+    <div class="mode-toggle" id="modeToggle">
+      <button class="active" data-mode="exp">The Experience</button>
+      <button data-mode="arch">The Architecture</button>
     </div>
-  </nav>
+    <div class="nav-links">
+      <a href="#apps-section">Apps</a>
+      <a href="#trust-section">Trust</a>
+      <a href="#book-section">Book</a>
+      <a href="#team-section">About</a>
+      <a href="#cta-section" class="nav-cta">Join Waitlist</a>
+    </div>
+  </div>
+</nav>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container">
-      <p class="label fade-up">Personal AI, Personal Data</p>
-      <h1 class="fade-up fade-up--d1">AI that actually <span class="gradient-text">knows you.</span></h1>
-      <p class="hero__subtitle fade-up fade-up--d2">
-        Tools for understanding yourself better — powered by AI that remembers, learns, and belongs to you.
-      </p>
-      <div class="waitlist fade-up fade-up--d3" id="waitlist-hero">
-        <input type="email" placeholder="your@email.com" aria-label="Email address">
-        <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
-      </div>
-      <div class="waitlist-details fade-up" style="display: none; max-width: 440px; margin: var(--space-md) auto 0;">
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-sm);">
-          Tell us a bit about yourself
-        </p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xs);">
-          <input type="text" name="firstName" placeholder="First name" aria-label="First name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-          <input type="text" name="lastName" placeholder="Last name" aria-label="Last name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container">
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <div class="section-label">The self-knowledge layer for the AI era</div>
+      <h1 class="hl hl-hero rv">AI keeps getting smarter.<br>It still doesn't <em>know you.</em></h1>
+      <p class="hero-sub rv">Most AI remembers what you said. selfActual knows how you work. There's a difference — and it compounds every session.</p>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <div class="section-label">Known-AI · Personal Intelligence Infrastructure</div>
+      <h1 class="hl hl-hero rv">The behavioral layer <em>underneath</em> AI.</h1>
+      <p class="hero-sub rv">A persistent operator model stored in a W3C Solid vault, bridged to AI agents via MCP. Portable across platforms. Sovereign by architecture.</p>
+    </div>
+    <!-- SHARED -->
+    <div class="hero-actions rv">
+      <a href="#cta-section" class="btn-primary">Join Waitlist</a>
+      <span class="hero-status"><span class="status-dot"></span> Alpha · Invite Only · 2026</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS BAR ============ -->
+<div class="stats-bar">
+  <div class="container">
+    <!-- EXPERIENCE MODE -->
+    <div class="stats-grid mode-exp">
+      <div class="stat"><div class="stat-label">What it is</div><div class="stat-value">Known-AI</div></div>
+      <div class="stat"><div class="stat-label">What it knows</div><div class="stat-value">How you work &amp; think</div></div>
+      <div class="stat"><div class="stat-label">Who owns it</div><div class="stat-value">You do</div></div>
+      <div class="stat"><div class="stat-label">If you leave</div><div class="stat-value">It comes with you</div></div>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="stats-grid mode-arch">
+      <div class="stat"><div class="stat-label">Category</div><div class="stat-value">Known-AI</div></div>
+      <div class="stat"><div class="stat-label">Layer</div><div class="stat-value">Behavioral</div></div>
+      <div class="stat"><div class="stat-label">Protocol</div><div class="stat-value">W3C Solid</div></div>
+      <div class="stat"><div class="stat-label">Custody</div><div class="stat-value">Operator-owned</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CORE INSIGHT ============ -->
+<section>
+  <div class="container">
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <div class="section-label rv">The Core Insight</div>
+      <h2 class="hl hl-section rv">Every AI conversation starts from scratch. <em>What if it didn't?</em></h2>
+      <div class="compare rv">
+        <div class="compare-col">
+          <h3 class="them">What everyone else does</h3>
+          <p>You close the chat. The AI forgets everything. Next time you open it, you re-explain your project, your preferences, your thinking style. It's capable — but it has no idea who you are. Every conversation is Day One.</p>
         </div>
-        <input type="text" name="company" placeholder="Company" aria-label="Company" style="width: 100%; margin-top: var(--space-xs); padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-        <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details" style="width: 100%; margin-top: var(--space-xs); min-height: 80px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--stone); border-radius: var(--border-radius); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
-        <button class="btn btn--primary" onclick="handleDetails(this)" style="margin-top: var(--space-xs); width: 100%;">Send</button>
+        <div class="compare-col">
+          <h3 class="us">What selfActual does</h3>
+          <p>Your AI already knows you when you sit down. Not because it stored your conversations — because you carry a living model of yourself that any AI can read. Start in Claude. Continue in ChatGPT. The understanding travels with you.</p>
+        </div>
       </div>
     </div>
-  </section>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <div class="section-label rv">The Core Insight</div>
+      <h2 class="hl hl-section rv">Current AI thinks the conversation belongs to the model. <em>We think it belongs to you.</em></h2>
+      <div class="compare rv">
+        <div class="compare-col">
+          <h3 class="them">What everyone else does</h3>
+          <p>The session ends. The context evaporates. Next time you sit down, you re-brief from scratch. The AI is capable but uninitiated — every conversation is Day One.</p>
+        </div>
+        <div class="compare-col">
+          <h3 class="us">What selfActual does</h3>
+          <p>Your operator model persists. Start in Claude. Continue in ChatGPT. Close in Gemini. The continuity didn't break. Because it never belonged to the model — it lived in your vault, traveled with you, and arrived oriented.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-  <!-- The Apps -->
-  <section>
-    <div class="container">
-      <p class="label">The Apps</p>
-      <h2 style="margin-top: var(--space-xs); margin-bottom: var(--space-lg);">
-        Four apps. One vault.<br>One place for your self-knowledge.
-      </h2>
+<!-- ============ PULL QUOTE ============ -->
+<div class="pull-quote rv">
+  <div class="pq-line"></div>
+  <!-- EXPERIENCE MODE -->
+  <blockquote class="mode-exp">Your self-knowledge should travel with you — not disappear when you close a tab.</blockquote>
+  <!-- ARCHITECTURE MODE -->
+  <blockquote class="mode-arch">The continuity belongs to the operator.</blockquote>
+</div>
 
-      <div class="cards">
-        <!-- Imprint -->
-        <a href="imprint.html" class="card">
-          <div class="card__icon card__icon--imprint"><img src="images/imprint_icon.png" alt=""></div>
-          <h3>Imprint</h3>
-          <p>AI that builds a persistent understanding of how you think, work, and communicate — and gets better every conversation.</p>
-          <ul class="card__features">
-            <li>Remembers your context across sessions</li>
-            <li>Challenges your thinking, not just agrees</li>
-            <li>Your profile, your data, your control</li>
+<!-- ============ WHY NOW ============ -->
+<section>
+  <div class="container">
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <div class="section-label rv">Why Now</div>
+      <h2 class="hl hl-section rv">AI is learning to use your tools. Nobody's teaching it <em>who you are.</em></h2>
+      <p class="body-text rv">Every AI company is racing to connect to your calendar, your files, your Slack. That's useful — but it's not understanding. Knowing what you did last Tuesday is different from knowing how you make decisions. That deeper layer is what's missing.</p>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <div class="section-label rv">Why Now</div>
+      <h2 class="hl hl-section rv">The industry is adding context. Nobody is building <em>knowing.</em></h2>
+      <p class="body-text rv">Files. Calendars. Slack history. RAG pipelines. PKM systems. It will all work. Eventually. And when it does, every system will hold the same morass of the same data — and none of it will know the operator underneath.</p>
+    </div>
+    <!-- SHARED GRID -->
+    <div class="three-grid rv">
+      <div class="grid-cell">
+        <div class="grid-cell-num">01 · Context</div>
+        <div class="row-label them">Them</div>
+        <h4 class="faded">What you've done.</h4>
+        <div class="row-label us">Us</div>
+        <h4>How you work.</h4>
+      </div>
+      <div class="grid-cell">
+        <div class="grid-cell-num">02 · Memory</div>
+        <div class="row-label them">Them</div>
+        <h4 class="faded">Session history.</h4>
+        <div class="row-label us">Us</div>
+        <h4>A living model of you.</h4>
+      </div>
+      <div class="grid-cell">
+        <div class="grid-cell-num">03 · Output</div>
+        <div class="row-label them">Them</div>
+        <h4 class="faded">Better answers.</h4>
+        <div class="row-label us">Us</div>
+        <h4>A better thinking partner.</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE PRODUCT ============ -->
+<section class="dark">
+  <div class="container">
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <div class="section-label rv">The Product</div>
+      <h2 class="hl hl-section rv" style="color:var(--white)">A private vault that holds <em>what makes you, you.</em></h2>
+      <p class="body-text rv">Think of it as a personal home base for everything AI should know about you — your strengths, your patterns, your decisions, your preferences. It lives in one place you own, and every AI you use can read from it. The more you use it, the smarter it gets.</p>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <div class="section-label rv">The Product</div>
+      <h2 class="hl hl-section rv" style="color:var(--white)">A living model of <em>how you operate.</em></h2>
+      <p class="body-text rv">Not a profile. Not preferences. A behavioral vault — native to you, portable across platforms, accessible to any AI surface. Updated every session. Owned by you. Built on W3C Solid with an MCP bridge to AI agents.</p>
+    </div>
+    <!-- SHARED PILLARS -->
+    <div class="pillars rv">
+      <div class="pillar">
+        <div class="pillar-num">01</div>
+        <!-- EXPERIENCE MODE -->
+        <h4 class="mode-exp">Works everywhere</h4>
+        <p class="mode-exp">Use it with Claude, ChatGPT, Gemini, or any AI that supports open protocols. Your self-knowledge isn't locked to one provider — it travels with you.</p>
+        <!-- ARCHITECTURE MODE -->
+        <h4 class="mode-arch">Portable</h4>
+        <p class="mode-arch">Works across Claude, ChatGPT, Gemini, and any MCP-compatible surface. Vault data is protocol-native, not API-dependent. Your wiring travels with you.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">02</div>
+        <h4 class="mode-exp">Gets smarter over time</h4>
+        <p class="mode-exp">Every conversation sharpens the model. Not because the AI is surveilling you — because you choose to close sessions deliberately, capturing what matters.</p>
+        <h4 class="mode-arch">Persistent</h4>
+        <p class="mode-arch">Every session sharpens the model. Sessions close deliberately instead of evaporating. Profile sections, session logs, and assessment data compound across surfaces.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">03</div>
+        <h4 class="mode-exp">Yours forever</h4>
+        <p class="mode-exp">Built on an open standard for personal data ownership. Your vault is yours — cryptographically, legally, actually. If you leave, everything comes with you. No lock-in.</p>
+        <h4 class="mode-arch">Sovereign</h4>
+        <p class="mode-arch">Built on W3C Solid. Your vault is yours cryptographically. Pod-level access control with granular consent surfaces. We are the custodian, not the owner.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ APPS ============ -->
+<section id="apps-section">
+  <div class="container">
+    <div class="section-label rv">The Apps</div>
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <h2 class="hl hl-section rv">Five apps that <em>get smarter together.</em></h2>
+      <p class="body-text rv">Each app adds to what your AI knows about you. Because they share one vault, what one learns makes the others better. It's like having a team that actually talks to each other.</p>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <h2 class="hl hl-section rv">Five apps. One vault. <em>Shared behavioral state.</em></h2>
+      <p class="body-text rv">Every app reads from and writes to the same Solid pod via MCP tools. Cross-surface state means Imprint's profile sections enrich Atlas coaching, and Atlas assessment data informs Imprint's operator model. No integration layer — shared substrate.</p>
+    </div>
+    <!-- SHARED CARDS -->
+    <div class="apps-grid">
+      <div class="app-card rv">
+        <img src="https://selfactual.ai/images/imprint_icon.png" alt="Imprint" class="app-icon">
+        <div class="app-badge live">Live</div>
+        <h3>Imprint</h3>
+        <p class="mode-exp">An AI thinking partner that actually remembers you. It builds a growing understanding of how you think, challenges your ideas, and picks up where you left off — every session, across platforms.</p>
+        <p class="mode-arch">AI thinking partner with persistent operator model. Session logs, profile sections, and growth protocol maintain behavioral continuity across conversations. 25+ vault MCP tools. Multi-gear cognitive framework.</p>
+      </div>
+      <div class="app-card rv">
+        <img src="https://selfactual.ai/images/atlas_icon.png" alt="Atlas" class="app-icon">
+        <div class="app-badge soon">Coming Soon</div>
+        <h3>Atlas</h3>
+        <p class="mode-exp">All your personality assessments and reflections in one place. Import from MBTI, Enneagram, Gallup, Insights Discovery — and get AI coaching that sees the whole picture, not one piece.</p>
+        <p class="mode-arch">Self-knowledge navigator aggregating 9+ assessment frameworks (MBTI, Enneagram, Insights, CliftonStrengths, Flow Attributes, Cantril, AST) with AI coaching grounded in vault-stored structured data.</p>
+      </div>
+      <div class="app-card rv">
+        <img src="https://selfactual.ai/images/vault_icon.png" alt="Vault" class="app-icon">
+        <div class="app-badge live">Live</div>
+        <h3>Vault</h3>
+        <p class="mode-exp">The personal data store at the center of everything. Every app reads from it and writes to it — your data, in open formats you can take with you. Private by default. Portable forever.</p>
+        <p class="mode-arch">Solid-based personal data store with automated dual-pod provisioning. WebID-based identity, pod-level ACLs, RDF-native storage. Platform API Gateway. The connective substrate all apps share.</p>
+      </div>
+      <div class="app-card rv">
+        <img src="https://selfactual.ai/images/currents_icon.png" alt="Currents" class="app-icon">
+        <div class="app-badge soon">Standalone Coming Soon</div>
+        <h3>Currents</h3>
+        <p class="mode-exp">Tasks, threads, and projects in one place — captured by you, Imprint, or Atlas, so nothing falls through the cracks. Embedded in Imprint today, standalone app coming soon.</p>
+        <p class="mode-arch">Kanban task manager reading from and writing to vault via MCP. Cross-surface task capture: Imprint, Atlas, and Claude Code all write tasks to the same vault substrate. Embedded in Imprint; standalone at tasks.selfactual.ai.</p>
+      </div>
+      <div class="app-card rv" style="grid-column: span 2;">
+        <img src="https://selfactual.ai/images/wisdom_icon.png" alt="Wisdom" class="app-icon">
+        <div class="app-badge soon">Coming Soon</div>
+        <h3>Wisdom</h3>
+        <p class="mode-exp">Your saved articles, notes, and research — turned into a personal knowledge base your AI can actually use and cite. Connects to tools you already use like Readwise and Obsidian.</p>
+        <p class="mode-arch">Personal knowledge base with structured ingestion from Readwise, Hypothesis, and Obsidian. AI-citable source graph stored in vault. Retrieval-augmented generation grounded in user-curated sources, not open web.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS / ARCHITECTURE ============ -->
+<section>
+  <div class="container">
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <div class="section-label rv">How It Works</div>
+      <h2 class="hl hl-section rv">Use the apps. <em>Your vault grows. AI gets smarter.</em></h2>
+      <p class="body-text rv">There's no setup. No data entry. Just start using Imprint or Atlas. Every conversation, every assessment, every reflection adds to what your AI knows about you — automatically, privately, in a place you own.</p>
+      <div class="three-grid rv" style="margin-top:2.5rem">
+        <div class="grid-cell">
+          <div class="grid-cell-num">Step 1</div>
+          <h4>Use the tools</h4>
+          <p style="font-size:0.88rem;line-height:1.65;color:var(--g600)">Have conversations. Take assessments. Reflect. Each interaction adds to your self-knowledge.</p>
+        </div>
+        <div class="grid-cell">
+          <div class="grid-cell-num">Step 2</div>
+          <h4>Your vault fills up</h4>
+          <p style="font-size:0.88rem;line-height:1.65;color:var(--g600)">Everything you create lives in one private, portable place — structured, connected, and always yours.</p>
+        </div>
+        <div class="grid-cell">
+          <div class="grid-cell-num">Step 3</div>
+          <h4>AI understands you</h4>
+          <p style="font-size:0.88rem;line-height:1.65;color:var(--g600)">The more you use it, the better it knows you. Not from surveillance — from the self-knowledge you chose to share.</p>
+        </div>
+      </div>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <div class="section-label rv">The Architecture</div>
+      <h2 class="hl hl-section rv">The bridge nobody else has built.</h2>
+      <p class="body-text rv">selfActual connects two protocols that were never designed to talk to each other — creating the first production link between personal data sovereignty and AI agents.</p>
+      <div class="arch-diagram rv">
+        <div class="arch-node">
+          <h4>Your Vault</h4>
+          <p>W3C Solid Protocol</p>
+        </div>
+        <div class="arch-bridge">
+          <span>selfActual MCP Server</span>
+          <div class="arch-bridge-line"></div>
+        </div>
+        <div class="arch-node">
+          <h4>AI Agents</h4>
+          <p>Model Context Protocol</p>
+        </div>
+      </div>
+      <p class="body-text rv">Your data lives in a Solid pod you own. AI agents read from it through MCP — the open protocol for connecting AI to external data. Three surfaces already read from the same vault: Imprint, Atlas, and Claude Code. 25+ tools, 9 resources. Live at mcp.selfactual.ai. If selfActual disappears, your data persists.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT THIS UNLOCKS ============ -->
+<section class="dark">
+  <div class="container">
+    <div class="section-label rv">What This Unlocks</div>
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <h2 class="hl hl-section rv" style="color:var(--white)">Imagine if every AI <em>already understood you.</em></h2>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <h2 class="hl hl-section rv" style="color:var(--white)">When self-knowledge becomes <em>infrastructure.</em></h2>
+    </div>
+    <!-- SHARED GRID -->
+    <div class="imagine-grid">
+      <div class="imagine-card rv">
+        <h4>For You</h4>
+        <p class="mode-exp">Every AI you use starts from understanding — your strengths, your patterns, your context. No more re-explaining yourself. Your self-knowledge compounds across every conversation, every tool, every platform.</p>
+        <p class="mode-arch">Persistent operator model across all AI surfaces. Assessment data, session logs, profile sections, and behavioral observations compound across conversations. No re-briefing. The vault is the substrate.</p>
+      </div>
+      <div class="imagine-card rv">
+        <h4>For Teams</h4>
+        <p class="mode-exp">Share what you want your team to know — your working style, your strengths, when you're in flow. Keep what's private, private. Collaboration that starts from real understanding, not guesswork.</p>
+        <p class="mode-arch">Multi-pod topology: personal vaults with org-level sharing surfaces. Firewall-and-sharing architecture. Consent-gated attribute publication. Inside-out collaboration grounded in structured self-knowledge.</p>
+      </div>
+      <div class="imagine-card rv">
+        <h4>For Organizations</h4>
+        <p class="mode-exp">Coaching and development that employees actually trust — because the data belongs to the person, not the company. Assessment results that travel when people change roles. Investment in people that compounds.</p>
+        <p class="mode-arch">Enterprise coaching without data liability. Portable assessment data across role changes. L&D investment compounds in the person's vault, not the platform. Fiduciary custody model eliminates data-governance friction.</p>
+      </div>
+      <div class="imagine-card rv">
+        <h4>For the World</h4>
+        <p class="mode-exp">A new default for personal data: you own it, you control it, it travels with you. From healthcare to education — self-knowledge that doesn't reset every time you switch systems.</p>
+        <p class="mode-arch">Fiduciary data custody as foundational infrastructure. Portable learner profiles, patient-owned health data, cross-platform identity. Open standards (W3C Solid) prevent vendor lock-in. Trust infrastructure for the AI era.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUST ============ -->
+<section id="trust-section">
+  <div class="container">
+    <div class="section-label rv">Trust by Design</div>
+    <!-- EXPERIENCE MODE -->
+    <div class="mode-exp">
+      <h2 class="hl hl-section rv">Your data is yours. <em>That's not a promise — it's how the system works.</em></h2>
+      <div class="trust-layout">
+        <div class="rv">
+          <div class="trust-analogy">
+            <p>Your bank holds your money, but it's legally yours. They can't spend it or keep it if you leave. We apply the same principle to your self-knowledge. It's called being a data fiduciary.</p>
+          </div>
+          <div class="trust-text">
+            <p>Most companies say "we take privacy seriously." That's a policy — it can change with a board vote. selfActual's approach is different: the trust is built into the architecture itself, not bolted on as a promise.</p>
+          </div>
+        </div>
+        <div class="rv">
+          <ul class="trust-list">
+            <li>Your vault belongs to you — technically and legally. Built on an open standard, not our proprietary system.</li>
+            <li>We never train on your data. What you share improves your AI, nobody else's.</li>
+            <li>You decide what to share and with whom. Private by default. Sharing is always your choice.</li>
+            <li>If you leave, everything comes with you. Open formats, full export, zero lock-in.</li>
+            <li>We're the custodian, not the owner. That distinction matters — and it's structural.</li>
           </ul>
-          <span class="badge badge--active">Alpha</span>
-        </a>
-
-        <!-- Atlas -->
-        <a href="atlas.html" class="card">
-          <div class="card__icon card__icon--atlas"><img src="images/atlas_icon.png" alt=""></div>
-          <h3>Atlas</h3>
-          <p>All your assessments, reflections, and growth data — brought together in one place with an AI coach that understands the full picture.</p>
-          <ul class="card__features">
-            <li>Import from any assessment tool</li>
-            <li>AI coaching grounded in your actual results</li>
-            <li>One conversation across all your self-knowledge</li>
+        </div>
+      </div>
+    </div>
+    <!-- ARCHITECTURE MODE -->
+    <div class="mode-arch">
+      <h2 class="hl hl-section rv">Data fiduciary architecture. <em>Not policy — protocol.</em></h2>
+      <div class="trust-layout">
+        <div class="rv">
+          <div class="trust-analogy">
+            <p>Fiduciary custody: we hold the data, you own it. Like a bank with deposits — the architecture enforces the obligation, not a terms-of-service document.</p>
+          </div>
+          <div class="trust-text">
+            <p>selfActual's trust model is structural. W3C Solid pods provide cryptographic ownership. Access control is pod-native, not application-layer. Consent is granular and revocable. The MCP bridge reads but never persists vault data.</p>
+          </div>
+        </div>
+        <div class="rv">
+          <ul class="trust-list">
+            <li>W3C Solid pods with WebID-based identity. Cryptographic ownership, not account-based.</li>
+            <li>Zero training on user data. Vault reads are session-scoped and never cached beyond the interaction.</li>
+            <li>Granular consent surfaces: attribute-level sharing with revocation. Pod-level ACLs.</li>
+            <li>Full data portability. RDF-based open formats. No proprietary schema lock-in.</li>
+            <li>Fiduciary custody model: selfActual is custodian, user is owner. Enforceable, not aspirational.</li>
           </ul>
-          <span class="badge badge--active">In Development</span>
-        </a>
-
-        <!-- Currents -->
-        <div class="card">
-          <div class="card__icon card__icon--currents"><img src="images/currents_icon.png" alt=""></div>
-          <h3>Currents</h3>
-          <p>Embedded in Imprint today — a standalone app is coming. Tasks, threads, and projects in one place, where your active work flows.</p>
-          <ul class="card__features">
-            <li>Tasks, threads, and projects in one view</li>
-            <li>Captured by you, Imprint, or Atlas — never lost</li>
-            <li>Lives in your vault and travels with you</li>
-          </ul>
-          <span class="badge badge--soon">Standalone Coming Soon</span>
-        </div>
-
-        <!-- Wisdom -->
-        <div class="card">
-          <div class="card__icon card__icon--wisdom"><img src="images/wisdom_icon.png" alt=""></div>
-          <h3>Wisdom</h3>
-          <p>Your saved articles, notes, and research — turned into a knowledge base AI can actually use. Citable, portable, owned by you.</p>
-          <ul class="card__features">
-            <li>Connects what you already use — Readwise, Hypothesis, Obsidian</li>
-            <li>AI cites your sources, not the open web</li>
-            <li>Works whether your library is curated or a shoe box</li>
-          </ul>
-          <span class="badge badge--soon">Coming Soon</span>
-        </div>
-
-        <!-- Vault -->
-        <a href="vault.html" class="card">
-          <div class="card__icon card__icon--vault"><img src="images/vault_icon.png" alt=""></div>
-          <h3>Vault</h3>
-          <p>The personal data store at the center of SelfActual. Every app reads from it and writes to it — your data, in open formats you can take with you.</p>
-          <ul class="card__features">
-            <li>Private by default — yours unless you choose to share</li>
-            <li>The connective tissue between every app</li>
-            <li>Open formats, portable forever, no lock-in</li>
-          </ul>
-          <span class="badge badge--active">Live</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- The Vault — What Connects Everything -->
-  <section style="background: var(--dark); color: var(--white); position: relative; overflow: hidden;">
-    <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(0,229,208,0.08) 0%, transparent 60%);"></div>
-    <div class="container" style="position: relative; z-index: 1;">
-      <div style="text-align: center; max-width: 640px; margin: 0 auto;">
-        <p class="label" style="color: rgba(255,255,255,0.4);">The Foundation</p>
-        <h2 style="margin-top: var(--space-xs); color: var(--white);">One vault. <span style="background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Every app connected.</span></h2>
-        <p style="color: rgba(255,255,255,0.65); margin: var(--space-md) auto var(--space-xl); max-width: 520px;">
-          Your vault is the personal data store at the center of SelfActual. Every app reads from it and writes to it — which means your Imprint profile, your Atlas assessments, and your Prompter reflections all enrich each other automatically.
-        </p>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl);">
-        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius); padding: var(--space-lg);">
-          <div style="font-size: 1.4rem; margin-bottom: var(--space-sm);">🔒</div>
-          <h3 style="font-size: 1.05rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: var(--space-xs);">Private by default</h3>
-          <p style="color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: none;">Your vault belongs to you. Reflections, session logs, and personal observations stay private unless you explicitly choose to share them.</p>
-        </div>
-        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius); padding: var(--space-lg);">
-          <div style="font-size: 1.4rem; margin-bottom: var(--space-sm);">🔗</div>
-          <h3 style="font-size: 1.05rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: var(--space-xs);">Apps talk to each other</h3>
-          <p style="color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: none;">When Atlas adds an assessment, Imprint can reference it in coaching. When Prompter captures a reflection, it deepens the AI's understanding of you across every app.</p>
-        </div>
-        <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--border-radius); padding: var(--space-lg);">
-          <div style="font-size: 1.4rem; margin-bottom: var(--space-sm);">🧳</div>
-          <h3 style="font-size: 1.05rem; font-family: var(--font-body); font-weight: 600; color: var(--white); margin-bottom: var(--space-xs);">Portable forever</h3>
-          <p style="color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: none;">Your data is stored in open, standard formats. If you leave SelfActual, your vault — and everything in it — comes with you. No lock-in. No data hostage.</p>
-        </div>
-      </div>
-
-      <div style="text-align: center;">
-        <a href="vault.html" class="btn btn--primary">Learn more about your vault</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pull Quote -->
-  <section class="pullquote">
-    <div class="container">
-      <div class="pullquote__content">
-        <p class="label">The Premise</p>
-        <blockquote>
-          "Your self-knowledge shouldn't be scattered across a dozen apps that each hold a fragment of who you are. It should live in one place you control — and travel with you."
-        </blockquote>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works -->
-  <section>
-    <div class="container">
-      <p class="label">How It Works</p>
-      <h2 style="margin-top: var(--space-xs);">Use the apps. Your vault grows. AI gets smarter.</h2>
-
-      <div class="steps">
-        <div class="step">
-          <h3>Use the tools</h3>
-          <p>Take assessments. Reflect. Have AI conversations. Each interaction adds to your self-knowledge.</p>
-        </div>
-        <div class="step">
-          <h3>Your vault fills up</h3>
-          <p>Everything you create lives in one private, portable place — structured, linked, and always yours.</p>
-        </div>
-        <div class="step">
-          <h3>AI understands you</h3>
-          <p>The more you use it, the better it knows you. Not from surveillance — from the data you chose to give it.</p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Final CTA -->
-  <section class="cta-section" id="waitlist">
-    <div class="container">
-      <h2>Interested?</h2>
-      <p>We're building in the open. Join the waitlist and we'll let you know when things are ready.</p>
-      <div class="waitlist">
-        <input type="email" placeholder="your@email.com" aria-label="Email address">
-        <button class="btn btn--primary" onclick="handleWaitlist(this)">Join Waitlist</button>
+<!-- ============ TEAM ============ -->
+<section id="team-section" style="background:var(--off-white)">
+  <div class="container">
+    <div class="section-label rv">The Team</div>
+    <h2 class="hl hl-section rv">Built by people who believe <em>your data is yours.</em></h2>
+    <div class="team-grid">
+      <div class="team-card rv">
+        <h3>Brad Topliff</h3>
+        <div class="role">Product and Strategy</div>
+        <p class="mode-exp">25 years building enterprise software for companies like Apple, Disney, and TIBCO. Now building the infrastructure that makes your self-knowledge portable, private, and actually yours. The person who decided your data should belong to you — and architected a system that enforces it.</p>
+        <p class="mode-arch">25 years in enterprise software architecture (Apple, Disney, TIBCO SaaS). Architected selfActual's Solid vault infrastructure, MCP bridge, multi-pod topology, and platform API gateway. Designed the fiduciary custody model. W3C Solid ecosystem contributor.</p>
       </div>
-      <div class="waitlist-details" style="display: none; max-width: 440px; margin: var(--space-md) auto 0;">
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-sm);">
-          Tell us a bit about yourself
-        </p>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xs);">
-          <input type="text" name="firstName" placeholder="First name" aria-label="First name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-          <input type="text" name="lastName" placeholder="Last name" aria-label="Last name" style="padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
+      <div class="team-card rv">
+        <h3>Jeremy Wright</h3>
+        <div class="role">AI and Technology</div>
+        <p class="mode-exp">Sold a search engine to Microsoft at 14. Stanford fellow. Built and led global teams of up to 800 people. Then built the first AI designed around knowing one person deeply — the system that became Imprint. Designing what it feels like when AI actually understands you.</p>
+        <p class="mode-arch">Sold a search engine to Microsoft at 14. Stanford fellow. Former agency leader ($500M annual book, teams of 3–800). Built the first AI system designed around a single known operator — the behavioral model, gear framework, and session lifecycle that make Imprint's operator model persistent and calibrating.</p>
+      </div>
+      <div class="team-card rv">
+        <h3>Chris Heuer</h3>
+        <div class="role">GTM and Customer Success</div>
+        <p class="mode-exp">Over a decade of thought leadership on how people actually adopt new technology. Helped democratize publishing through one of the internet's first major blogging networks. Now leading market positioning, investor conversations, and go-to-market strategy — and selfActual's most active daily user.</p>
+        <p class="mode-arch">Decade-plus thought leadership on organizational transformation and AI adoption. Co-created professional blogging ecosystem (b5media). Leads market positioning, GTM strategy, and investor relations. Most active internal dogfooder — surfaces friction, use cases, and product insights from daily professional use.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE BOOK ============ -->
+<section id="book-section">
+  <div class="container">
+    <div class="section-label rv">The Book</div>
+    <h2 class="hl hl-section rv">selfActual began as a <em>practice</em> — long before it was a platform.</h2>
+    <div class="book-layout">
+      <div class="book-cover-wrap rv">
+        <img src="images/book_cover.png" alt="a.i. &amp; I — or selfcraft: how i learned to stop worrying and love a.i., by Brad Topliff" class="book-cover">
+      </div>
+      <div class="rv">
+        <div class="book-title">a.i. &amp; I</div>
+        <div class="book-subtitle">or selfcraft: how i learned to stop worrying and love a.i.</div>
+        <div class="book-byline">Brad Topliff, with Howard Esbin, PhD — <em>and occasionally Claude</em></div>
+        <!-- EXPERIENCE MODE -->
+        <p class="book-desc mode-exp">Before there was a vault or a protocol, there was a habit Brad calls <strong>selfcraft</strong>: the deliberate work of knowing yourself well enough that any AI can meet you where you are. The book is that story — how working alongside AI, instead of bracing against it, can make you more yourself, not less. selfActual is what happened when the practice needed a home.</p>
+        <!-- ARCHITECTURE MODE -->
+        <p class="book-desc mode-arch"><strong>selfcraft</strong> is the thesis underneath the architecture. Before the Solid vaults and the MCP bridge, there was a single argument: the operator — not the model — should own the relationship. The book traces that claim from first principles to the system you're reading about now. Everything here is downstream of it.</p>
+        <div class="book-actions">
+          <span class="book-status"><span class="status-dot"></span> Coming 2026</span>
+          <a href="#cta-section" class="book-link">Join the waitlist for an early copy</a>
         </div>
-        <input type="text" name="company" placeholder="Company" aria-label="Company" style="width: 100%; margin-top: var(--space-xs); padding: 0.75rem 1rem; border: 1.5px solid var(--stone); border-radius: 100px; font-family: var(--font-body); font-size: 0.9rem; outline: none;">
-        <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details" style="width: 100%; margin-top: var(--space-xs); min-height: 80px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--stone); border-radius: var(--border-radius); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none;"></textarea>
-        <button class="btn btn--primary" onclick="handleDetails(this)" style="margin-top: var(--space-xs); width: 100%;">Send</button>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer__left">
-        <img src="images/selfactual_logo.png" alt="SelfActual">
-        <span>© 2026 SelfActual</span>
-      </div>
-      <ul class="footer__links">
-        <li><a href="vault.html">Your Vault</a></li>
-        <li><a href="imprint.html">Imprint</a></li>
-        <li><a href="atlas.html">Atlas</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="#" onclick="openContactModal(); return false;">Contact</a></li>
-        <li><a href="privacy.html">Privacy</a></li>
-        <li><a href="terms.html">Terms</a></li>
-      </ul>
+<!-- ============ FINAL CTA ============ -->
+<section class="final-cta" id="cta-section">
+  <div class="container">
+    <h2 class="hl hl-section rv" style="color:var(--white)">
+      <span class="mode-exp">AI that finally <em>knows you.</em></span>
+      <span class="mode-arch">The self-knowledge layer for <em>the AI era.</em></span>
+    </h2>
+    <p class="sub rv mode-exp">Start with Imprint. Your vault builds itself. Every AI gets smarter about you.</p>
+    <p class="sub rv mode-arch">Solid vaults. MCP bridge. Fiduciary custody. Live and shipping.</p>
+    <div class="waitlist rv" id="waitlist-cta">
+      <input type="email" placeholder="your@email.com" aria-label="Email address">
+      <button class="btn-primary" onclick="handleWaitlist(this)">Join Waitlist</button>
     </div>
-  </footer>
+    <div class="waitlist-details" style="display:none;">
+      <p class="wd-label">Tell us a bit about yourself</p>
+      <div class="wd-row">
+        <input type="text" name="firstName" placeholder="First name" aria-label="First name">
+        <input type="text" name="lastName" placeholder="Last name" aria-label="Last name">
+      </div>
+      <input type="text" name="company" placeholder="Company" aria-label="Company">
+      <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details"></textarea>
+      <button class="btn-primary" onclick="handleDetails(this)">Send</button>
+    </div>
+  </div>
+</section>
 
-  <script src="contact-modal.js"></script>
-  <script>
-    const WAITLIST_API = 'https://selfactual-waitlist.selfactual.workers.dev';
+<!-- ============ FOOTER ============ -->
+<footer>
+  <span class="footer-copy"><img src="https://selfactual.ai/images/selfactual_logo.png" alt="selfActual" style="height:22px;vertical-align:middle;margin-right:0.5rem;">© 2026 selfActual · San Mateo, CA</span>
+  <div class="footer-nav">
+    <a href="#">Vault</a>
+    <a href="#">Imprint</a>
+    <a href="#">Atlas</a>
+    <a href="#book-section">Book</a>
+    <a href="#">About</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </div>
+</footer>
 
-    async function handleWaitlist(btn) {
-      const container = btn.parentElement;
-      const input = container.querySelector('input');
-      const email = input ? input.value.trim() : '';
+<!-- ============ SCRIPTS ============ -->
+<script>
+// Mode toggle
+const toggle = document.getElementById('modeToggle');
+const buttons = toggle.querySelectorAll('button');
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.mode;
+    document.body.className = mode;
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // Re-trigger reveal animations for newly visible elements
+    document.querySelectorAll('.rv').forEach(el => {
+      el.classList.remove('vis');
+      void el.offsetWidth;
+      if (el.getBoundingClientRect().top < window.innerHeight * 0.92) {
+        el.classList.add('vis');
+      }
+    });
+  });
+});
 
-      if (!email || !email.includes('@')) {
-        input.style.borderColor = 'var(--coral)';
-        input.setAttribute('placeholder', 'Please enter a valid email');
-        setTimeout(() => {
-          input.style.borderColor = '';
-          input.setAttribute('placeholder', 'your@email.com');
-        }, 2000);
-        return;
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv').forEach(el => observer.observe(el));
+
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ---- Waitlist (ported from the main site; same Cloudflare Worker backend) ----
+const WAITLIST_API = 'https://selfactual-waitlist.selfactual.workers.dev';
+
+async function handleWaitlist(btn) {
+  const container = btn.parentElement;
+  const input = container.querySelector('input');
+  const email = input ? input.value.trim() : '';
+
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = 'var(--coral)';
+    input.setAttribute('placeholder', 'Please enter a valid email');
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.setAttribute('placeholder', 'your@email.com');
+    }, 2000);
+    return;
+  }
+
+  const source = 'NewSite';
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  let firstTouch = {};
+  try { firstTouch = JSON.parse(localStorage.getItem('sa_first_touch') || '{}'); } catch (e) {}
+
+  const payload = {
+    email,
+    source,
+    ...firstTouch,
+    current_url: window.location.href,
+    screen_width: window.screen.width,
+    tz_client: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  };
+
+  try {
+    const res = await fetch(WAITLIST_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      btn.textContent = 'You’re on the list ✓';
+      btn.style.background = 'var(--cyan)';
+      input.disabled = true;
+
+      if (typeof window.Intercom === 'function') {
+        window.Intercom('update', { email });
       }
 
-      const source = container.closest('#waitlist-hero') ? 'Hero' : 'Footer';
-
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-
-      let firstTouch = {};
-      try { firstTouch = JSON.parse(localStorage.getItem('sa_first_touch') || '{}'); } catch (e) {}
-
-      const payload = {
-        email,
-        source,
-        ...firstTouch,
-        current_url: window.location.href,
-        screen_width: window.screen.width,
-        tz_client: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      };
-
-      try {
-        const res = await fetch(WAITLIST_API, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-
-        if (res.ok) {
-          btn.textContent = 'You\u2019re on the list \u2713';
-          btn.style.background = 'var(--cyan)';
-          input.disabled = true;
-
-          if (typeof window.Intercom === 'function') {
-            window.Intercom('update', { email });
-          }
-
-          // Show the details follow-up
-          const details = container.parentElement.querySelector('.waitlist-details');
-          if (details) {
-            details.style.display = 'block';
-            details.dataset.email = email;
-          }
-        } else {
-          btn.textContent = 'Something went wrong';
-          btn.style.background = 'var(--coral)';
-          btn.disabled = false;
-        }
-      } catch (e) {
-        btn.textContent = 'Something went wrong';
-        btn.style.background = 'var(--coral)';
-        btn.disabled = false;
+      // Show the details follow-up
+      const details = container.parentElement.querySelector('.waitlist-details');
+      if (details) {
+        details.style.display = 'block';
+        details.dataset.email = email;
       }
+    } else {
+      btn.textContent = 'Something went wrong';
+      btn.style.background = 'var(--coral)';
+      btn.disabled = false;
     }
+  } catch (e) {
+    btn.textContent = 'Something went wrong';
+    btn.style.background = 'var(--coral)';
+    btn.disabled = false;
+  }
+}
 
-    async function handleDetails(btn) {
-      const container = btn.parentElement;
-      const firstName = (container.querySelector('[name="firstName"]').value || '').trim();
-      const lastName = (container.querySelector('[name="lastName"]').value || '').trim();
-      const company = (container.querySelector('[name="company"]').value || '').trim();
-      const details = (container.querySelector('[name="details"]').value || '').trim();
-      const email = container.dataset.email;
+async function handleDetails(btn) {
+  const container = btn.parentElement;
+  const firstName = (container.querySelector('[name="firstName"]').value || '').trim();
+  const lastName = (container.querySelector('[name="lastName"]').value || '').trim();
+  const company = (container.querySelector('[name="company"]').value || '').trim();
+  const details = (container.querySelector('[name="details"]').value || '').trim();
+  const email = container.dataset.email;
 
-      if (!email || (!firstName && !lastName && !company && !details)) {
-        container.style.display = 'none';
-        return;
-      }
+  if (!email || (!firstName && !lastName && !company && !details)) {
+    container.style.display = 'none';
+    return;
+  }
 
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
 
-      try {
-        const res = await fetch(WAITLIST_API, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, firstName, lastName, company, details }),
-        });
+  try {
+    const res = await fetch(WAITLIST_API, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, firstName, lastName, company, details }),
+    });
 
-        if (res.ok) {
-          btn.textContent = 'Thanks!';
-          btn.style.background = 'var(--cyan)';
-          container.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
-          setTimeout(() => { container.style.display = 'none'; }, 1200);
-        } else {
-          btn.textContent = 'Something went wrong';
-          btn.style.background = 'var(--coral)';
-          btn.disabled = false;
-        }
-      } catch (e) {
-        btn.textContent = 'Something went wrong';
-        btn.style.background = 'var(--coral)';
-        btn.disabled = false;
-      }
+    if (res.ok) {
+      btn.textContent = 'Thanks!';
+      btn.style.background = 'var(--cyan)';
+      container.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
+      setTimeout(() => { container.style.display = 'none'; }, 1200);
+    } else {
+      btn.textContent = 'Something went wrong';
+      btn.style.background = 'var(--coral)';
+      btn.disabled = false;
     }
-  </script>
-
+  } catch (e) {
+    btn.textContent = 'Something went wrong';
+    btn.style.background = 'var(--coral)';
+    btn.disabled = false;
+  }
+}
+</script>
 </body>
 </html>
