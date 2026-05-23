@@ -14,6 +14,8 @@
       --sa-blue-soft: rgba(22,177,223,0.08);
       --imprint-purple: #7C3AED;
       --atlas-green: #10B981;
+      --coral: #e5484d;
+      --cyan: #10B981;
       --navy: #0a1628;
       --navy-mid: #0e1a2b;
       --white: #f8f9fa;
@@ -319,6 +321,37 @@
     }
     .final-cta .hl { margin:0 auto 1rem; text-align:center; }
     .final-cta .sub { color:rgba(255,255,255,0.5); margin-bottom:2.5rem; font-size:1rem; }
+
+    /* ---- WAITLIST FORM (ported from main site) ---- */
+    .waitlist {
+      display:flex; gap:0.6rem; max-width:460px; margin:0 auto;
+      flex-wrap:wrap; justify-content:center;
+    }
+    .waitlist input[type="email"] {
+      flex:1 1 240px; padding:0.85rem 1.2rem;
+      border:1px solid rgba(255,255,255,0.22); border-radius:4px;
+      background:rgba(255,255,255,0.06); color:var(--white);
+      font-family:var(--sans); font-size:0.95rem; outline:none;
+      transition:border-color 0.2s;
+    }
+    .waitlist input[type="email"]:focus { border-color:var(--sa-blue); }
+    .waitlist input[type="email"]::placeholder { color:rgba(255,255,255,0.4); }
+    .waitlist-details { max-width:460px; margin:1.25rem auto 0; text-align:left; }
+    .waitlist-details .wd-label { font-size:0.9rem; color:rgba(255,255,255,0.6); margin-bottom:0.75rem; }
+    .waitlist-details .wd-row { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+    .waitlist-details input, .waitlist-details textarea {
+      width:100%; padding:0.75rem 1rem; margin-top:0.6rem;
+      border:1px solid rgba(255,255,255,0.22); border-radius:4px;
+      background:rgba(255,255,255,0.06); color:var(--white);
+      font-family:var(--sans); font-size:0.9rem; outline:none;
+    }
+    .waitlist-details .wd-row input { margin-top:0; }
+    .waitlist-details input:focus, .waitlist-details textarea:focus { border-color:var(--sa-blue); }
+    .waitlist-details input::placeholder, .waitlist-details textarea::placeholder { color:rgba(255,255,255,0.4); }
+    .waitlist-details textarea { min-height:80px; resize:vertical; }
+    .waitlist-details .btn-primary { margin-top:0.75rem; width:100%; justify-content:center; }
+    /* form submit buttons don't get the nav arrow */
+    .waitlist .btn-primary::after, .waitlist-details .btn-primary::after { content:none; }
 
     /* ---- FOOTER ---- */
     footer {
@@ -784,7 +817,20 @@
     </h2>
     <p class="sub rv mode-exp">Start with Imprint. Your vault builds itself. Every AI gets smarter about you.</p>
     <p class="sub rv mode-arch">Solid vaults. MCP bridge. Fiduciary custody. Live and shipping.</p>
-    <a href="#" class="btn-primary rv">Join Waitlist</a>
+    <div class="waitlist rv" id="waitlist-cta">
+      <input type="email" placeholder="your@email.com" aria-label="Email address">
+      <button class="btn-primary" onclick="handleWaitlist(this)">Join Waitlist</button>
+    </div>
+    <div class="waitlist-details" style="display:none;">
+      <p class="wd-label">Tell us a bit about yourself</p>
+      <div class="wd-row">
+        <input type="text" name="firstName" placeholder="First name" aria-label="First name">
+        <input type="text" name="lastName" placeholder="Last name" aria-label="Last name">
+      </div>
+      <input type="text" name="company" placeholder="Company" aria-label="Company">
+      <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details"></textarea>
+      <button class="btn-primary" onclick="handleDetails(this)">Send</button>
+    </div>
   </div>
 </section>
 
@@ -833,6 +879,115 @@ document.querySelectorAll('.rv').forEach(el => observer.observe(el));
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
 });
+
+// ---- Waitlist (ported from the main site; same Cloudflare Worker backend) ----
+const WAITLIST_API = 'https://selfactual-waitlist.selfactual.workers.dev';
+
+async function handleWaitlist(btn) {
+  const container = btn.parentElement;
+  const input = container.querySelector('input');
+  const email = input ? input.value.trim() : '';
+
+  if (!email || !email.includes('@')) {
+    input.style.borderColor = 'var(--coral)';
+    input.setAttribute('placeholder', 'Please enter a valid email');
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.setAttribute('placeholder', 'your@email.com');
+    }, 2000);
+    return;
+  }
+
+  const source = 'NewSite';
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  let firstTouch = {};
+  try { firstTouch = JSON.parse(localStorage.getItem('sa_first_touch') || '{}'); } catch (e) {}
+
+  const payload = {
+    email,
+    source,
+    ...firstTouch,
+    current_url: window.location.href,
+    screen_width: window.screen.width,
+    tz_client: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  };
+
+  try {
+    const res = await fetch(WAITLIST_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (res.ok) {
+      btn.textContent = 'You’re on the list ✓';
+      btn.style.background = 'var(--cyan)';
+      input.disabled = true;
+
+      if (typeof window.Intercom === 'function') {
+        window.Intercom('update', { email });
+      }
+
+      // Show the details follow-up
+      const details = container.parentElement.querySelector('.waitlist-details');
+      if (details) {
+        details.style.display = 'block';
+        details.dataset.email = email;
+      }
+    } else {
+      btn.textContent = 'Something went wrong';
+      btn.style.background = 'var(--coral)';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    btn.textContent = 'Something went wrong';
+    btn.style.background = 'var(--coral)';
+    btn.disabled = false;
+  }
+}
+
+async function handleDetails(btn) {
+  const container = btn.parentElement;
+  const firstName = (container.querySelector('[name="firstName"]').value || '').trim();
+  const lastName = (container.querySelector('[name="lastName"]').value || '').trim();
+  const company = (container.querySelector('[name="company"]').value || '').trim();
+  const details = (container.querySelector('[name="details"]').value || '').trim();
+  const email = container.dataset.email;
+
+  if (!email || (!firstName && !lastName && !company && !details)) {
+    container.style.display = 'none';
+    return;
+  }
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(WAITLIST_API, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, firstName, lastName, company, details }),
+    });
+
+    if (res.ok) {
+      btn.textContent = 'Thanks!';
+      btn.style.background = 'var(--cyan)';
+      container.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
+      setTimeout(() => { container.style.display = 'none'; }, 1200);
+    } else {
+      btn.textContent = 'Something went wrong';
+      btn.style.background = 'var(--coral)';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    btn.textContent = 'Something went wrong';
+    btn.style.background = 'var(--coral)';
+    btn.disabled = false;
+  }
+}
 </script>
 </body>
 </html>
