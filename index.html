@@ -158,6 +158,10 @@
       display:grid; grid-template-columns:repeat(4,1fr);
       border-top:1px solid var(--g200); border-bottom:1px solid var(--g200);
     }
+    /* The mode toggle's `display:block` on .mode-exp/.mode-arch outranks
+       .stats-grid's display:grid — re-assert grid on the visible one. */
+    body.exp .stats-grid.mode-exp,
+    body.arch .stats-grid.mode-arch { display:grid; }
     .stat {
       padding:1.4rem 1.4rem 1.4rem 0;
       border-right:1px solid var(--g200);
