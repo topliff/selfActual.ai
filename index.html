@@ -328,40 +328,6 @@
     }
     .team-card p { font-size:0.88rem; line-height:1.65; color: var(--g600); }
 
-    /* ---- BOOK ---- */
-    .book-layout {
-      display:grid; grid-template-columns:0.8fr 1fr;
-      gap:4rem; align-items:center; margin-top:3rem;
-    }
-    .book-cover-wrap { display:flex; justify-content:center; }
-    .book-cover {
-      width:100%; max-width:360px; height:auto;
-      filter: drop-shadow(0 28px 45px rgba(10,22,40,0.22));
-      transition: transform 0.45s ease;
-    }
-    .book-cover:hover { transform: translateY(-8px) rotate(-1.2deg); }
-    .book-title { font-family: var(--serif); font-size: clamp(2.1rem,4vw,2.9rem); line-height:1.05; margin-bottom:0.45rem; }
-    .book-subtitle {
-      font-family: var(--serif); font-style:italic; font-size:1.12rem;
-      line-height:1.4; color: var(--g600); margin-bottom:1.3rem;
-    }
-    .book-byline { font-size:0.82rem; letter-spacing:0.03em; color: var(--g500); margin-bottom:1.6rem; }
-    .book-byline em { font-style:italic; color: var(--sa-blue); }
-    .book-desc {
-      font-size:1rem; font-weight:300; line-height:1.8;
-      color: var(--g600); max-width:520px; margin-bottom:1.9rem;
-    }
-    .book-desc strong { font-weight:500; color: var(--navy); font-style:italic; }
-    .book-actions { display:flex; align-items:center; gap:1.4rem; flex-wrap:wrap; }
-    .book-status {
-      display:inline-flex; align-items:center; gap:0.5rem;
-      font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color: var(--g500);
-    }
-    .book-status .status-dot { background: var(--sa-blue); }
-    .book-link { font-size:0.9rem; font-weight:500; color: var(--sa-blue); text-decoration:none; }
-    .book-link::after { content:' →'; }
-    .book-link:hover { text-decoration:underline; }
-
     /* ---- FINAL CTA ---- */
     .final-cta {
       text-align:center; background: var(--navy-mid);
@@ -428,7 +394,6 @@
       .stat:nth-child(2) { border-right:none; }
       .stat:nth-child(3),.stat:nth-child(4) { border-top:1px solid var(--g200); }
       .compare, .imagine-grid, .trust-layout, .apps-grid { grid-template-columns:1fr; }
-      .book-layout { grid-template-columns:1fr; gap:2.5rem; }
       .three-grid, .pillars, .team-grid { grid-template-columns:1fr; }
       .grid-cell,.pillar { border-right:none!important; border-bottom:1px solid var(--g200); }
       .dark .grid-cell,.pillar { border-bottom-color:rgba(255,255,255,0.1); }
@@ -453,7 +418,6 @@
     <div class="nav-links">
       <a href="#apps-section">Apps</a>
       <a href="#trust-section">Trust</a>
-      <a href="#book-section">Book</a>
       <a href="#team-section">About</a>
       <a href="#cta-section" class="nav-cta">Join Waitlist</a>
     </div>
@@ -858,32 +822,6 @@
   </div>
 </section>
 
-<!-- ============ THE BOOK ============ -->
-<section id="book-section">
-  <div class="container">
-    <div class="section-label rv">The Book</div>
-    <h2 class="hl hl-section rv">selfActual began as a <em>practice</em> — long before it was a platform.</h2>
-    <div class="book-layout">
-      <div class="book-cover-wrap rv">
-        <img src="images/book_cover.png" alt="a.i. &amp; I — or selfcraft: how i learned to stop worrying and love a.i., by Brad Topliff" class="book-cover">
-      </div>
-      <div class="rv">
-        <div class="book-title">a.i. &amp; I</div>
-        <div class="book-subtitle">or selfcraft: how i learned to stop worrying and love a.i.</div>
-        <div class="book-byline">Brad Topliff, with Howard Esbin, PhD — <em>and occasionally Claude</em></div>
-        <!-- EXPERIENCE MODE -->
-        <p class="book-desc mode-exp">Before there was a vault or a protocol, there was a habit Brad calls <strong>selfcraft</strong>: the deliberate work of knowing yourself well enough that any AI can meet you where you are. The book is that story — how working alongside AI, instead of bracing against it, can make you more yourself, not less. selfActual is what happened when the practice needed a home.</p>
-        <!-- ARCHITECTURE MODE -->
-        <p class="book-desc mode-arch"><strong>selfcraft</strong> is the thesis underneath the architecture. Before the Solid vaults and the MCP bridge, there was a single argument: the operator — not the model — should own the relationship. The book traces that claim from first principles to the system you're reading about now. Everything here is downstream of it.</p>
-        <div class="book-actions">
-          <span class="book-status"><span class="status-dot"></span> Coming 2026</span>
-          <a href="#cta-section" class="book-link">Join the waitlist for an early copy</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ FINAL CTA ============ -->
 <section class="final-cta" id="cta-section">
   <div class="container">
@@ -917,7 +855,6 @@
     <a href="#">Vault</a>
     <a href="#">Imprint</a>
     <a href="#">Atlas</a>
-    <a href="#book-section">Book</a>
     <a href="#">About</a>
     <a href="#">Privacy</a>
     <a href="#">Terms</a>
