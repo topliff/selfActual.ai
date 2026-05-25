@@ -243,7 +243,7 @@
 
     /* ---- APP CARDS ---- */
     .apps-grid {
-      display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2.5rem;
+      display:grid; grid-template-columns:1fr 1fr 1fr; gap:1.5rem; margin-top:2.5rem;
     }
     .app-card {
       border:1px solid var(--g200); padding:2.4rem;
@@ -608,12 +608,12 @@
     <div class="section-label rv">The Apps</div>
     <!-- EXPERIENCE MODE -->
     <div class="mode-exp">
-      <h2 class="hl hl-section rv">Five apps that <em>get smarter together.</em></h2>
+      <h2 class="hl hl-section rv">Three apps that <em>get smarter together.</em></h2>
       <p class="body-text rv">Each app adds to what your AI knows about you. Because they share one vault, what one learns makes the others better. It's like having a team that actually talks to each other.</p>
     </div>
     <!-- ARCHITECTURE MODE -->
     <div class="mode-arch">
-      <h2 class="hl hl-section rv">Five apps. One vault. <em>Shared behavioral state.</em></h2>
+      <h2 class="hl hl-section rv">Three apps. One vault. <em>Shared behavioral state.</em></h2>
       <p class="body-text rv">Every app reads from and writes to the same Solid pod via MCP tools. Cross-surface state means Imprint's profile sections enrich Atlas coaching, and Atlas assessment data informs Imprint's operator model. No integration layer — shared substrate.</p>
     </div>
     <!-- SHARED CARDS -->
@@ -638,20 +638,6 @@
         <h3>Vault</h3>
         <p class="mode-exp">The personal data store at the center of everything. Every app reads from it and writes to it — your data, in open formats you can take with you. Private by default. Portable forever.</p>
         <p class="mode-arch">Solid-based personal data store with automated dual-pod provisioning. WebID-based identity, pod-level ACLs, RDF-native storage. Platform API Gateway. The connective substrate all apps share.</p>
-      </div>
-      <div class="app-card rv">
-        <img src="https://selfactual.ai/images/currents_icon.png" alt="Currents" class="app-icon">
-        <div class="app-badge soon">Standalone Coming Soon</div>
-        <h3>Currents</h3>
-        <p class="mode-exp">Tasks, threads, and projects in one place — captured by you, Imprint, or Atlas, so nothing falls through the cracks. Embedded in Imprint today, standalone app coming soon.</p>
-        <p class="mode-arch">Kanban task manager reading from and writing to vault via MCP. Cross-surface task capture: Imprint, Atlas, and Claude Code all write tasks to the same vault substrate. Embedded in Imprint; standalone at tasks.selfactual.ai.</p>
-      </div>
-      <div class="app-card rv" style="grid-column: span 2;">
-        <img src="https://selfactual.ai/images/wisdom_icon.png" alt="Wisdom" class="app-icon">
-        <div class="app-badge soon">Coming Soon</div>
-        <h3>Wisdom</h3>
-        <p class="mode-exp">Your saved articles, notes, and research — turned into a personal knowledge base your AI can actually use and cite. Connects to tools you already use like Readwise and Obsidian.</p>
-        <p class="mode-arch">Personal knowledge base with structured ingestion from Readwise, Hypothesis, and Obsidian. AI-citable source graph stored in vault. Retrieval-augmented generation grounded in user-curated sources, not open web.</p>
       </div>
     </div>
   </div>
