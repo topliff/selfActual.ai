@@ -22,25 +22,14 @@
 </head>
 <body>
 
-  <!-- Navigation -->
-  <nav class="nav">
+  <!-- Header (logo only — standalone policy page, no navigation) -->
+  <header class="nav">
     <div class="container">
-      <a href="index.html" class="nav__logo">
+      <span class="nav__logo">
         <img src="images/selfactual_logo.png" alt="SelfActual">
-      </a>
-      <button class="nav__toggle" onclick="document.querySelector('.nav__links').classList.toggle('open')" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav__links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="vault.html">Your Vault</a></li>
-        <li><a href="imprint.html">Imprint</a></li>
-        <li><a href="atlas.html">Atlas</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
-      <a href="index.html#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
+      </span>
     </div>
-  </nav>
+  </header>
 
   <!-- Page Header -->
   <section class="page-header">
@@ -149,15 +138,7 @@
         <img src="images/selfactual_logo.png" alt="SelfActual">
         <span>&copy; 2026 SelfActual</span>
       </div>
-      <ul class="footer__links">
-        <li><a href="about.html">About</a></li>
-        <li><a href="#" onclick="openContactModal(); return false;">Contact</a></li>
-        <li><a href="privacy.html">Privacy</a></li>
-        <li><a href="terms.html">Terms</a></li>
-      </ul>
     </div>
   </footer>
-
-  <script src="contact-modal.js"></script>
 </body>
 </html>
