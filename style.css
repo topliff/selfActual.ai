@@ -686,6 +686,14 @@ section {
   margin-bottom: var(--space-xs);
 }
 
+.prose h3 {
+  font-size: 1.02rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-xs);
+}
+
 .prose p {
   color: var(--text-secondary);
   line-height: 1.75;
