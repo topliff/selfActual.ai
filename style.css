@@ -133,9 +133,7 @@ section {
   left: 0;
   right: 0;
   height: var(--nav-height);
-  background: rgba(250, 250, 247, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(250, 250, 247, 0.97);
   border-bottom: 1px solid rgba(0,0,0,0.05);
   z-index: 1000;
   display: flex;
