@@ -112,6 +112,20 @@ async function handleCreate(request, env, ctx) {
       );
     }
 
+    // Waitlist welcome email via gateway
+    if (env.GATEWAY_WAITLIST_URL && env.WAITLIST_EMAIL_SECRET) {
+      ctx.waitUntil(
+        fetch(env.GATEWAY_WAITLIST_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${env.WAITLIST_EMAIL_SECRET}`,
+          },
+          body: JSON.stringify({ email }),
+        }).catch((e) => console.error('Waitlist email error:', e.message))
+      );
+    }
+
     return Response.json({ success: true, email }, { headers: CORS_HEADERS });
   } catch (e) {
     console.error('Worker error:', e);
@@ -163,7 +177,7 @@ function extractTelemetry(request, body) {
 // Waitlist details update — update Intercom contact with name/company
 async function handleUpdate(request, env, ctx) {
   try {
-    const { email, firstName, lastName, company, details } = await request.json();
+    const { email, firstName, lastName, company, details, claudeAccount, referralSource, productUpdates } = await request.json();
 
     if (!email) {
       return Response.json({ error: 'email required' }, { status: 400, headers: CORS_HEADERS });
@@ -172,7 +186,10 @@ async function handleUpdate(request, env, ctx) {
     const fullName = [firstName, lastName].filter(Boolean).join(' ');
     const customAttributes = {};
     if (company) customAttributes.company = company;
-    if (details) customAttributes.details = details;
+    const referralText = referralSource || details;
+    if (referralText) customAttributes.referral_source = referralText;
+    if (claudeAccount) customAttributes.claude_account = claudeAccount;
+    if (typeof productUpdates === 'boolean') customAttributes.product_updates = productUpdates;
 
     // Slack notification
     if (env.SLACK_WEBHOOK) {
