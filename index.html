@@ -836,14 +836,14 @@
         <input type="text" name="lastName" placeholder="Last name" aria-label="Last name">
       </div>
       <input type="text" name="company" placeholder="Company" aria-label="Company">
-      <select name="claudeAccount" aria-label="Claude account tier">
+      <select name="claudeAccount" aria-label="Claude account tier" onchange="this.nextElementSibling.style.display = this.value === 'Not yet' ? '' : 'none'">
         <option value="">Do you have a Claude account?</option>
         <option value="Pro">Yes — Pro</option>
         <option value="Max">Yes — Max</option>
         <option value="Team or Enterprise">Yes — Team or Enterprise</option>
         <option value="Not yet">Not yet</option>
       </select>
-      <p class="wd-helper">Imprint works best with a paid Claude account. The free tier can connect but sessions get cut short.</p>
+      <p class="wd-helper" style="display:none;">Imprint works best with a paid Claude account. The free tier can connect but sessions get cut short.</p>
       <textarea name="referralSource" placeholder="Where did you hear about us? Anything else?" aria-label="Referral source"></textarea>
       <label class="wd-checkbox">
         <input type="checkbox" name="productUpdates"> Keep me posted on product updates
