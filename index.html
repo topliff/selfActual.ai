@@ -357,16 +357,20 @@
     .waitlist-details { max-width:460px; margin:1.25rem auto 0; text-align:left; }
     .waitlist-details .wd-label { font-size:0.9rem; color:rgba(255,255,255,0.6); margin-bottom:0.75rem; }
     .waitlist-details .wd-row { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
-    .waitlist-details input, .waitlist-details textarea {
+    .waitlist-details input, .waitlist-details textarea, .waitlist-details select {
       width:100%; padding:0.75rem 1rem; margin-top:0.6rem;
       border:1px solid rgba(255,255,255,0.22); border-radius:4px;
       background:rgba(255,255,255,0.06); color:var(--white);
       font-family:var(--sans); font-size:0.9rem; outline:none;
     }
+    .waitlist-details select option { background:#0d1f3c; color:var(--white); }
     .waitlist-details .wd-row input { margin-top:0; }
-    .waitlist-details input:focus, .waitlist-details textarea:focus { border-color:var(--sa-blue); }
+    .waitlist-details input:focus, .waitlist-details textarea:focus, .waitlist-details select:focus { border-color:var(--sa-blue); }
     .waitlist-details input::placeholder, .waitlist-details textarea::placeholder { color:rgba(255,255,255,0.4); }
     .waitlist-details textarea { min-height:80px; resize:vertical; }
+    .waitlist-details .wd-helper { font-size:0.78rem; color:rgba(255,255,255,0.45); margin:0.25rem 0 0.25rem 0; line-height:1.5; }
+    .waitlist-details .wd-checkbox { display:flex; align-items:center; gap:8px; font-size:0.85rem; color:rgba(255,255,255,0.65); cursor:pointer; margin-top:0.6rem; }
+    .waitlist-details .wd-checkbox input[type="checkbox"] { width:15px; height:15px; accent-color:var(--cyan); flex-shrink:0; }
     .waitlist-details .btn-primary { margin-top:0.75rem; width:100%; justify-content:center; }
     /* form submit buttons don't get the nav arrow */
     .waitlist .btn-primary::after, .waitlist-details .btn-primary::after { content:none; }
@@ -804,9 +808,9 @@
       </div>
       <div class="team-card rv">
         <h3>Chris Heuer</h3>
-        <div class="role">GTM and Customer Success</div>
-        <p class="mode-exp">Over a decade of thought leadership on how people actually adopt new technology. Helped democratize publishing through one of the internet's first major blogging networks. Now leading market positioning, investor conversations, and go-to-market strategy — and selfActual's most active daily user.</p>
-        <p class="mode-arch">Decade-plus thought leadership on organizational transformation and AI adoption. Co-created professional blogging ecosystem (b5media). Leads market positioning, GTM strategy, and investor relations. Most active internal dogfooder — surfaces friction, use cases, and product insights from daily professional use.</p>
+        <div class="role">Vision, Mission &amp; Market</div>
+        <p class="mode-exp">Forty-five years at the leading edge of technology revolutions. Thirty+ as entrepreneur, storyteller, and advocate for humanity. Now holding a vision for how AI can unlock our human potential. Listening and researching for what people actually need and weaving that into what we build — so AI becomes a mirror for who we can become, not a ceiling on who we are.</p>
+        <p class="mode-arch">Forty-five years at the leading edge of technology revolutions. Thirty+ as entrepreneur, storyteller, and advocate for humanity. Now holding a vision for how AI can unlock our human potential. Listening and researching for what people actually need and weaving that into what we build — so AI becomes a mirror for who we can become, not a ceiling on who we are.</p>
       </div>
     </div>
   </div>
@@ -832,7 +836,18 @@
         <input type="text" name="lastName" placeholder="Last name" aria-label="Last name">
       </div>
       <input type="text" name="company" placeholder="Company" aria-label="Company">
-      <textarea name="details" placeholder="Anything else you'd like us to know..." aria-label="Additional details"></textarea>
+      <select name="claudeAccount" aria-label="Claude account tier">
+        <option value="">Do you have a Claude account?</option>
+        <option value="Pro">Yes — Pro</option>
+        <option value="Max">Yes — Max</option>
+        <option value="Team or Enterprise">Yes — Team or Enterprise</option>
+        <option value="Not yet">Not yet</option>
+      </select>
+      <p class="wd-helper">Imprint works best with a paid Claude account. The free tier can connect but sessions get cut short.</p>
+      <textarea name="referralSource" placeholder="Where did you hear about us? Anything else?" aria-label="Referral source"></textarea>
+      <label class="wd-checkbox">
+        <input type="checkbox" name="productUpdates"> Keep me posted on product updates
+      </label>
       <button class="btn-primary" onclick="handleDetails(this)">Send</button>
     </div>
   </div>
@@ -955,10 +970,12 @@ async function handleDetails(btn) {
   const firstName = (container.querySelector('[name="firstName"]').value || '').trim();
   const lastName = (container.querySelector('[name="lastName"]').value || '').trim();
   const company = (container.querySelector('[name="company"]').value || '').trim();
-  const details = (container.querySelector('[name="details"]').value || '').trim();
+  const claudeAccount = (container.querySelector('[name="claudeAccount"]').value || '').trim();
+  const referralSource = (container.querySelector('[name="referralSource"]').value || '').trim();
+  const productUpdates = container.querySelector('[name="productUpdates"]').checked;
   const email = container.dataset.email;
 
-  if (!email || (!firstName && !lastName && !company && !details)) {
+  if (!email || (!firstName && !lastName && !company && !claudeAccount && !referralSource && !productUpdates)) {
     container.style.display = 'none';
     return;
   }
@@ -970,13 +987,13 @@ async function handleDetails(btn) {
     const res = await fetch(WAITLIST_API, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, firstName, lastName, company, details }),
+      body: JSON.stringify({ email, firstName, lastName, company, claudeAccount, referralSource, productUpdates }),
     });
 
     if (res.ok) {
       btn.textContent = 'Thanks!';
       btn.style.background = 'var(--cyan)';
-      container.querySelectorAll('input, textarea').forEach(el => el.disabled = true);
+      container.querySelectorAll('input, textarea, select').forEach(el => el.disabled = true);
       setTimeout(() => { container.style.display = 'none'; }, 1200);
     } else {
       btn.textContent = 'Something went wrong';
