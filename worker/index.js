@@ -104,7 +104,10 @@ async function handleCreate(request, env, ctx) {
               email,
               customAttributes,
             });
-            console.log('Intercom waitlist result:', contactId ? `contact ${contactId}` : 'failed');
+            if (contactId) {
+              await tagIntercomContact(env, contactId, 'waitlist-signup');
+            }
+            console.log('Intercom waitlist result:', contactId ? `contact ${contactId} tagged` : 'failed');
           } catch (e) {
             console.error('Intercom waitlist error:', e.message, e.stack);
           }
@@ -378,6 +381,22 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
   }
   const data = await res.json();
   return data.id;
+}
+
+async function tagIntercomContact(env, contactId, tagName) {
+  if (!env.INTERCOM_TOKEN || !contactId) return;
+  const res = await fetch(`${INTERCOM_API}/tags`, {
+    method: 'POST',
+    headers: intercomHeaders(env),
+    body: JSON.stringify({
+      name: tagName,
+      contacts: [{ id: contactId }],
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`Intercom tag "${tagName}" failed:`, res.status, errText);
+  }
 }
 
 async function createIntercomConversation(env, { contactId, body }) {

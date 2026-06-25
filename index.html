@@ -16,8 +16,7 @@
     gtag('config', 'G-R82XNXT8J0');
   </script>
 
-  <!-- Intercom (launcher hidden — tracking only) -->
-  <script src="intercom.js?v=2"></script>
+
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -936,10 +935,6 @@ async function handleWaitlist(btn) {
       btn.textContent = 'You’re on the list ✓';
       btn.style.background = 'var(--cyan)';
       input.disabled = true;
-
-      if (typeof window.Intercom === 'function') {
-        window.Intercom('update', { email });
-      }
 
       // Show the details follow-up
       const details = container.parentElement.querySelector('.waitlist-details');
