@@ -359,8 +359,22 @@ async function upsertIntercomContact(env, { email, name, role = 'lead', customAt
   });
   if (!res.ok) {
     const errText = await res.text();
-    console.error('Intercom create failed:', res.status, errText);
-    return null;
+    console.error('Intercom create failed:', res.status, errText, '— retrying without custom_attributes');
+    // Custom attributes may not be pre-defined in this workspace; retry bare.
+    const retryBody = { role, email };
+    if (name) retryBody.name = name;
+    const retryRes = await fetch(`${INTERCOM_API}/contacts`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(retryBody),
+    });
+    if (!retryRes.ok) {
+      const retryErr = await retryRes.text();
+      console.error('Intercom create retry failed:', retryRes.status, retryErr);
+      return null;
+    }
+    const retryData = await retryRes.json();
+    return retryData.id;
   }
   const data = await res.json();
   return data.id;
