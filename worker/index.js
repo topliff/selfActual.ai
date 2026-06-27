@@ -93,41 +93,51 @@ async function handleCreate(request, env, ctx) {
       );
     }
 
-    // Intercom contact creation
-    if (env.INTERCOM_TOKEN) {
-      ctx.waitUntil(
-        (async () => {
+    // Intercom contact + welcome email in one block so tag state reflects
+    // confirmed email delivery: waitlist-signup → waitlist-welcomed only if
+    // the gateway confirms the email was sent.
+    ctx.waitUntil(
+      (async () => {
+        let contactId = null;
+
+        if (env.INTERCOM_TOKEN) {
           try {
             const customAttributes = { ...telemetry };
             if (source) customAttributes.source = source;
-            const contactId = await upsertIntercomContact(env, {
-              email,
-              customAttributes,
-            });
+            contactId = await upsertIntercomContact(env, { email, customAttributes });
             if (contactId) {
               await tagIntercomContact(env, contactId, 'waitlist-signup');
             }
-            console.log('Intercom waitlist result:', contactId ? `contact ${contactId} tagged` : 'failed');
+            console.log('Intercom waitlist result:', contactId ? `contact ${contactId} tagged waitlist-signup` : 'failed');
           } catch (e) {
             console.error('Intercom waitlist error:', e.message, e.stack);
           }
-        })()
-      );
-    }
+        }
 
-    // Waitlist welcome email via gateway
-    if (env.GATEWAY_WAITLIST_URL && env.WAITLIST_EMAIL_SECRET) {
-      ctx.waitUntil(
-        fetch(env.GATEWAY_WAITLIST_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${env.WAITLIST_EMAIL_SECRET}`,
-          },
-          body: JSON.stringify({ email }),
-        }).catch((e) => console.error('Waitlist email error:', e.message))
-      );
-    }
+        if (env.GATEWAY_WAITLIST_URL && env.WAITLIST_EMAIL_SECRET) {
+          try {
+            const emailRes = await fetch(env.GATEWAY_WAITLIST_URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${env.WAITLIST_EMAIL_SECRET}`,
+              },
+              body: JSON.stringify({ email }),
+            });
+            console.log('Waitlist email result:', emailRes.ok ? 'sent' : `failed (${emailRes.status})`);
+
+            // Advance tag state on confirmed delivery
+            if (emailRes.ok && contactId && env.INTERCOM_TOKEN) {
+              await untagIntercomContact(env, contactId, 'waitlist-signup');
+              await tagIntercomContact(env, contactId, 'waitlist-welcomed');
+              console.log('Intercom tag advanced: waitlist-signup → waitlist-welcomed');
+            }
+          } catch (e) {
+            console.error('Waitlist email error:', e.message);
+          }
+        }
+      })()
+    );
 
     return Response.json({ success: true, email }, { headers: CORS_HEADERS });
   } catch (e) {
@@ -396,6 +406,22 @@ async function tagIntercomContact(env, contactId, tagName) {
   if (!res.ok) {
     const errText = await res.text();
     console.error(`Intercom tag "${tagName}" failed:`, res.status, errText);
+  }
+}
+
+async function untagIntercomContact(env, contactId, tagName) {
+  if (!env.INTERCOM_TOKEN || !contactId) return;
+  const res = await fetch(`${INTERCOM_API}/tags`, {
+    method: 'POST',
+    headers: intercomHeaders(env),
+    body: JSON.stringify({
+      name: tagName,
+      contacts: [{ id: contactId, untag: true }],
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    console.error(`Intercom untag "${tagName}" failed:`, res.status, errText);
   }
 }
 
