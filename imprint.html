@@ -38,7 +38,7 @@
         <li><a href="atlas.html">Atlas</a></li>
         <li><a href="about.html">About</a></li>
       </ul>
-      <a href="index.html#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
+      <a href="#waitlist" class="nav__cta nav__cta--desktop">Join Waitlist</a>
     </div>
   </nav>
 
@@ -51,8 +51,32 @@
         Every AI conversation starts from zero. Imprint changes that. It builds a persistent understanding of who you are — how you think, what you care about, where you're headed — and carries that context into every interaction.
       </p>
       <div style="margin-top: var(--space-lg);" class="fade-up fade-up--d3">
-        <a href="index.html#waitlist" class="btn btn--primary">Join the Waitlist</a>
-        <span class="badge badge--active" style="margin-left: var(--space-sm);">In Development</span>
+        <div class="imprint-waitlist" id="hero-waitlist">
+          <input type="email" placeholder="your@email.com" aria-label="Email address">
+          <button class="btn btn--primary" onclick="handleImprintWaitlist(this)">Join the Waitlist</button>
+        </div>
+        <div class="imprint-waitlist-details" style="display:none;">
+          <p class="iwd-label">Tell us a bit about yourself</p>
+          <div class="iwd-row">
+            <input type="text" name="firstName" placeholder="First name" aria-label="First name">
+            <input type="text" name="lastName" placeholder="Last name" aria-label="Last name">
+          </div>
+          <input type="text" name="company" placeholder="Company" aria-label="Company">
+          <select name="claudeAccount" aria-label="Claude account tier" onchange="this.nextElementSibling.style.display = this.value === 'Not yet' ? '' : 'none'">
+            <option value="">Do you have a Claude account?</option>
+            <option value="Pro">Yes — Pro</option>
+            <option value="Max">Yes — Max</option>
+            <option value="Team or Enterprise">Yes — Team or Enterprise</option>
+            <option value="Not yet">Not yet</option>
+          </select>
+          <p class="iwd-helper" style="display:none;">Imprint works best with a paid Claude account. The free tier can connect but sessions get cut short.</p>
+          <textarea name="referralSource" placeholder="Where did you hear about us? Anything else?" aria-label="Referral source"></textarea>
+          <label class="iwd-checkbox">
+            <input type="checkbox" name="productUpdates" checked> Keep me posted on product updates
+          </label>
+          <button class="btn btn--primary" onclick="handleImprintDetails(this)">Send</button>
+        </div>
+        <span class="badge badge--active" style="display:block;margin-top: var(--space-sm);">In Development</span>
       </div>
     </div>
   </section>
@@ -198,11 +222,35 @@
   </section>
 
   <!-- CTA -->
-  <section class="cta-section" style="background: var(--cream-warm); border-top: 1px solid rgba(0,0,0,0.04);">
+  <section class="cta-section" id="waitlist" style="background: var(--cream-warm); border-top: 1px solid rgba(0,0,0,0.04);">
     <div class="container">
       <h2>AI should know you.<br>And you should own that knowledge.</h2>
       <p>Imprint is in active development. Join the waitlist to get early access.</p>
-      <a href="index.html#waitlist" class="btn btn--primary">Join the Waitlist</a>
+      <div class="imprint-waitlist" id="cta-waitlist">
+        <input type="email" placeholder="your@email.com" aria-label="Email address">
+        <button class="btn btn--primary" onclick="handleImprintWaitlist(this)">Join the Waitlist</button>
+      </div>
+      <div class="imprint-waitlist-details" style="display:none;">
+        <p class="iwd-label">Tell us a bit about yourself</p>
+        <div class="iwd-row">
+          <input type="text" name="firstName" placeholder="First name" aria-label="First name">
+          <input type="text" name="lastName" placeholder="Last name" aria-label="Last name">
+        </div>
+        <input type="text" name="company" placeholder="Company" aria-label="Company">
+        <select name="claudeAccount" aria-label="Claude account tier" onchange="this.nextElementSibling.style.display = this.value === 'Not yet' ? '' : 'none'">
+          <option value="">Do you have a Claude account?</option>
+          <option value="Pro">Yes — Pro</option>
+          <option value="Max">Yes — Max</option>
+          <option value="Team or Enterprise">Yes — Team or Enterprise</option>
+          <option value="Not yet">Not yet</option>
+        </select>
+        <p class="iwd-helper" style="display:none;">Imprint works best with a paid Claude account. The free tier can connect but sessions get cut short.</p>
+        <textarea name="referralSource" placeholder="Where did you hear about us? Anything else?" aria-label="Referral source"></textarea>
+        <label class="iwd-checkbox">
+          <input type="checkbox" name="productUpdates" checked> Keep me posted on product updates
+        </label>
+        <button class="btn btn--primary" onclick="handleImprintDetails(this)">Send</button>
+      </div>
     </div>
   </section>
 
@@ -223,5 +271,159 @@
   </footer>
 
   <script src="contact-modal.js"></script>
+
+  <style>
+    .imprint-waitlist {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .imprint-waitlist input[type="email"] {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.65rem 1rem;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 6px;
+      font-size: 1rem;
+      background: #fff;
+      color: #111;
+    }
+    .imprint-waitlist input[type="email"]:focus { outline: none; border-color: var(--primary, #4a6cf7); }
+    .imprint-waitlist-details {
+      max-width: 420px;
+      margin: 1rem auto 0;
+      text-align: left;
+    }
+    .imprint-waitlist-details input,
+    .imprint-waitlist-details textarea,
+    .imprint-waitlist-details select {
+      display: block;
+      width: 100%;
+      margin-top: 0.6rem;
+      padding: 0.6rem 0.85rem;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      background: #fff;
+      color: #111;
+      box-sizing: border-box;
+    }
+    .imprint-waitlist-details textarea { min-height: 72px; resize: vertical; }
+    .imprint-waitlist-details .btn { margin-top: 0.75rem; width: 100%; justify-content: center; }
+    .iwd-label { font-size: 0.9rem; color: rgba(0,0,0,0.55); margin: 0.75rem 0 0; }
+    .iwd-helper { font-size: 0.78rem; color: rgba(0,0,0,0.45); margin: 0.2rem 0 0; line-height: 1.5; }
+    .iwd-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .iwd-row input { margin-top: 0.6rem; }
+    .iwd-checkbox { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: rgba(0,0,0,0.6); cursor: pointer; margin-top: 0.6rem; }
+    .iwd-checkbox input[type="checkbox"] { width: 15px; height: 15px; flex-shrink: 0; }
+  </style>
+
+  <script>
+    const IMPRINT_WAITLIST_API = 'https://selfactual-waitlist.selfactual.workers.dev';
+
+    async function handleImprintWaitlist(btn) {
+      const container = btn.parentElement;
+      const input = container.querySelector('input');
+      const email = input ? input.value.trim() : '';
+
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#e05';
+        input.setAttribute('placeholder', 'Please enter a valid email');
+        setTimeout(() => {
+          input.style.borderColor = '';
+          input.setAttribute('placeholder', 'your@email.com');
+        }, 2000);
+        return;
+      }
+
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      let firstTouch = {};
+      try { firstTouch = JSON.parse(localStorage.getItem('sa_first_touch') || '{}'); } catch (e) {}
+
+      const payload = {
+        email,
+        source: 'imprint',
+        ...firstTouch,
+        current_url: window.location.href,
+        screen_width: window.screen.width,
+        tz_client: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+
+      try {
+        const res = await fetch(IMPRINT_WAITLIST_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          btn.textContent = 'You\'re on the list ✓';
+          btn.style.background = 'var(--success, #00b894)';
+          input.disabled = true;
+
+          const details = container.parentElement.querySelector('.imprint-waitlist-details');
+          if (details) {
+            details.style.display = 'block';
+            details.dataset.email = email;
+          }
+        } else {
+          btn.textContent = 'Something went wrong';
+          btn.style.background = '#e05';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        btn.textContent = 'Something went wrong';
+        btn.style.background = '#e05';
+        btn.disabled = false;
+      }
+    }
+
+    async function handleImprintDetails(btn) {
+      const container = btn.parentElement;
+      const firstName = (container.querySelector('[name="firstName"]').value || '').trim();
+      const lastName = (container.querySelector('[name="lastName"]').value || '').trim();
+      const company = (container.querySelector('[name="company"]').value || '').trim();
+      const claudeAccount = (container.querySelector('[name="claudeAccount"]').value || '').trim();
+      const referralSource = (container.querySelector('[name="referralSource"]').value || '').trim();
+      const productUpdates = container.querySelector('[name="productUpdates"]').checked;
+      const email = container.dataset.email;
+
+      if (!email || (!firstName && !lastName && !company && !claudeAccount && !referralSource && !productUpdates)) {
+        container.style.display = 'none';
+        return;
+      }
+
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(IMPRINT_WAITLIST_API, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, firstName, lastName, company, claudeAccount, referralSource, productUpdates }),
+        });
+
+        if (res.ok) {
+          btn.textContent = 'Thanks!';
+          btn.style.background = 'var(--success, #00b894)';
+          container.querySelectorAll('input, textarea, select').forEach(el => el.disabled = true);
+          setTimeout(() => { container.style.display = 'none'; }, 1200);
+        } else {
+          btn.textContent = 'Something went wrong';
+          btn.style.background = '#e05';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        btn.textContent = 'Something went wrong';
+        btn.style.background = '#e05';
+        btn.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
