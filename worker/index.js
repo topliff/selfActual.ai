@@ -1,3 +1,22 @@
+// selfactual-waitlist Cloudflare Worker — thin relay to gateway.
+//
+// Receives waitlist form submissions from selfactual.ai and imprint.selfactual.ai,
+// validates input, and forwards to the gateway's /api/waitlist/signup endpoint.
+// The gateway owns Intercom upsert, Slack notification, and invite-code lifecycle.
+//
+// Env vars required:
+//   GATEWAY_URL           — gateway base URL, e.g. https://api.selfactual.ai
+//   WAITLIST_EMAIL_SECRET — shared secret (sent as Bearer token to gateway)
+//   SLACK_WEBHOOK         — plain incoming webhook for non-interactive Slack
+//                           fallback (optional; gateway posts the interactive
+//                           approve-button message via bot token)
+//
+// Routes kept:
+//   POST /           — waitlist step 1 (email only) or step 2 (enrichment)
+//   PATCH /          — waitlist step 2 enrichment (legacy; maps to same gateway call)
+//   POST /contact    — contact form (unchanged; not part of the waitlist pipeline)
+//   GET  /debug      — env var presence check
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, PATCH, GET, OPTIONS',
@@ -20,49 +39,35 @@ export default {
       return handleContact(request, env, ctx);
     }
 
-    if (request.method === 'POST') return handleCreate(request, env, ctx);
-    if (request.method === 'PATCH') return handleUpdate(request, env, ctx);
+    if (request.method === 'POST' || request.method === 'PATCH') {
+      return handleWaitlist(request, env, ctx);
+    }
 
     return new Response('Method not allowed', { status: 405, headers: CORS_HEADERS });
   },
 };
 
-// Debug endpoint
-async function handleDebug(env) {
-  const results = {
-    hasIntercomToken: !!env.INTERCOM_TOKEN,
-    tokenLength: env.INTERCOM_TOKEN ? env.INTERCOM_TOKEN.length : 0,
-    tokenPrefix: env.INTERCOM_TOKEN ? env.INTERCOM_TOKEN.substring(0, 8) + '...' : 'NOT SET',
+// ---------------------------------------------------------------------------
+// Debug
+// ---------------------------------------------------------------------------
+
+function handleDebug(env) {
+  return Response.json({
+    hasGatewayUrl: !!env.GATEWAY_URL,
+    hasWaitlistSecret: !!env.WAITLIST_EMAIL_SECRET,
     hasSlackWebhook: !!env.SLACK_WEBHOOK,
-    intercomApiTest: null,
-  };
-
-  if (env.INTERCOM_TOKEN) {
-    try {
-      const res = await fetch('https://api.intercom.io/me', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${env.INTERCOM_TOKEN}`,
-          'Accept': 'application/json',
-          'Intercom-Version': '2.11',
-        },
-      });
-      const body = await res.text();
-      results.intercomApiTest = {
-        status: res.status,
-        ok: res.ok,
-        body: body.substring(0, 500),
-      };
-    } catch (e) {
-      results.intercomApiTest = { error: e.message };
-    }
-  }
-
-  return Response.json(results, { headers: CORS_HEADERS });
+  }, { headers: CORS_HEADERS });
 }
 
-// Waitlist signup — Slack + Intercom
-async function handleCreate(request, env, ctx) {
+// ---------------------------------------------------------------------------
+// Waitlist signup / enrichment — POST or PATCH
+//
+// Step 1 body: { email, source?, landing_url?, referrer?, utm_*, ... }
+// Step 2 body: { email, firstName?, lastName?, details?, productUpdates?, ... }
+// Both steps forward to POST /api/waitlist/signup on the gateway.
+// ---------------------------------------------------------------------------
+
+async function handleWaitlist(request, env, ctx) {
   try {
     const body = await request.json();
     const { email, source } = body;
@@ -73,70 +78,35 @@ async function handleCreate(request, env, ctx) {
 
     const telemetry = extractTelemetry(request, body);
 
-    // Slack notification
-    if (env.SLACK_WEBHOOK) {
-      const geo = [telemetry.city, telemetry.region, telemetry.country].filter(Boolean).join(', ');
-      const lines = [`New waitlist signup: *${email}*` + (source ? ` (${source})` : '')];
-      if (geo) lines.push(`📍 ${geo}` + (telemetry.asn_org ? ` — ${telemetry.asn_org}` : ''));
-      if (telemetry.utm_source) {
-        const utmParts = [telemetry.utm_source, telemetry.utm_medium, telemetry.utm_campaign].filter(Boolean);
-        lines.push(`🔗 ${utmParts.join(' / ')}`);
-      }
-      if (telemetry.referrer) lines.push(`↩︎ Referrer: ${telemetry.referrer}`);
-      if (telemetry.landing_url) lines.push(`🚪 Landing: ${telemetry.landing_url}`);
-      ctx.waitUntil(
-        fetch(env.SLACK_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: lines.join('\n') }),
-        }).catch((e) => console.error('Slack error:', e.message))
-      );
+    const gatewayUrl = env.GATEWAY_URL;
+    const secret = env.WAITLIST_EMAIL_SECRET;
+
+    if (!gatewayUrl || !secret) {
+      console.error('Worker: GATEWAY_URL or WAITLIST_EMAIL_SECRET not configured');
+      return Response.json({ error: 'Server misconfigured' }, { status: 503, headers: CORS_HEADERS });
     }
 
-    // Intercom contact + welcome email in one block so tag state reflects
-    // confirmed email delivery: waitlist-signup → waitlist-welcomed only if
-    // the gateway confirms the email was sent.
     ctx.waitUntil(
-      (async () => {
-        let contactId = null;
-
-        if (env.INTERCOM_TOKEN) {
-          try {
-            const customAttributes = { ...telemetry };
-            if (source) customAttributes.source = source;
-            contactId = await upsertIntercomContact(env, { email, customAttributes });
-            if (contactId) {
-              await tagIntercomContact(env, contactId, 'waitlist-signup');
-            }
-            console.log('Intercom waitlist result:', contactId ? `contact ${contactId} tagged waitlist-signup` : 'failed');
-          } catch (e) {
-            console.error('Intercom waitlist error:', e.message, e.stack);
-          }
+      fetch(`${gatewayUrl}/api/waitlist/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${secret}`,
+        },
+        body: JSON.stringify({
+          email,
+          name: [body.firstName, body.lastName].filter(Boolean).join(' ') || undefined,
+          details: body.details || body.referralSource || undefined,
+          productUpdates: typeof body.productUpdates === 'boolean' ? body.productUpdates : undefined,
+          source: source || undefined,
+          telemetry,
+        }),
+      }).then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          console.error('Gateway waitlist/signup failed:', res.status, text);
         }
-
-        if (env.GATEWAY_WAITLIST_URL && env.WAITLIST_EMAIL_SECRET) {
-          try {
-            const emailRes = await fetch(env.GATEWAY_WAITLIST_URL, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${env.WAITLIST_EMAIL_SECRET}`,
-              },
-              body: JSON.stringify({ email }),
-            });
-            console.log('Waitlist email result:', emailRes.ok ? 'sent' : `failed (${emailRes.status})`);
-
-            // Advance tag state on confirmed delivery
-            if (emailRes.ok && contactId && env.INTERCOM_TOKEN) {
-              await untagIntercomContact(env, contactId, 'waitlist-signup');
-              await tagIntercomContact(env, contactId, 'waitlist-welcomed');
-              console.log('Intercom tag advanced: waitlist-signup → waitlist-welcomed');
-            }
-          } catch (e) {
-            console.error('Waitlist email error:', e.message);
-          }
-        }
-      })()
+      }).catch((e) => console.error('Gateway waitlist/signup error:', e.message))
     );
 
     return Response.json({ success: true, email }, { headers: CORS_HEADERS });
@@ -146,8 +116,54 @@ async function handleCreate(request, env, ctx) {
   }
 }
 
-// Pull request telemetry from Cloudflare + headers + client-sent body fields.
-// Returns a flat object suitable for Intercom custom_attributes (nulls stripped).
+// ---------------------------------------------------------------------------
+// Contact form — unchanged; not part of the waitlist pipeline
+// ---------------------------------------------------------------------------
+
+async function handleContact(request, env, ctx) {
+  try {
+    const { name, email, category, message } = await request.json();
+
+    if (!email || !email.includes('@')) {
+      return Response.json({ error: 'Valid email required' }, { status: 400, headers: CORS_HEADERS });
+    }
+    if (!message) {
+      return Response.json({ error: 'Message required' }, { status: 400, headers: CORS_HEADERS });
+    }
+
+    if (env.SLACK_WEBHOOK) {
+      ctx.waitUntil(
+        fetch(env.SLACK_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text: `New contact form from *${name || email}*${category ? ` [${category}]` : ''}:\n${message}`,
+          }),
+        }).catch((e) => console.error('Slack error:', e.message))
+      );
+    }
+
+    // Contact forms still go directly to Intercom to create a conversation.
+    // This is separate from the waitlist pipeline.
+    if (env.INTERCOM_TOKEN) {
+      ctx.waitUntil(
+        upsertIntercomContact(env, { email, name: name || undefined })
+          .then((contactId) => contactId && createIntercomConversation(env, { contactId, body: message }))
+          .catch((e) => console.error('Intercom contact error:', e.message))
+      );
+    }
+
+    return Response.json({ success: true }, { headers: CORS_HEADERS });
+  } catch (e) {
+    console.error('Worker error:', e);
+    return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Telemetry extraction
+// ---------------------------------------------------------------------------
+
 function extractTelemetry(request, body) {
   const cf = request.cf || {};
   const h = request.headers;
@@ -187,125 +203,10 @@ function extractTelemetry(request, body) {
   return out;
 }
 
-// Waitlist details update — update Intercom contact with name/company
-async function handleUpdate(request, env, ctx) {
-  try {
-    const { email, firstName, lastName, company, details, claudeAccount, referralSource, productUpdates } = await request.json();
-
-    if (!email) {
-      return Response.json({ error: 'email required' }, { status: 400, headers: CORS_HEADERS });
-    }
-
-    const fullName = [firstName, lastName].filter(Boolean).join(' ');
-    const customAttributes = {};
-    if (company) customAttributes.company = company;
-    const referralText = referralSource || details;
-    if (referralText) customAttributes.referral_source = referralText;
-    if (claudeAccount) customAttributes.claude_account = claudeAccount;
-    if (typeof productUpdates === 'boolean') customAttributes.product_updates = productUpdates;
-
-    // Slack notification
-    if (env.SLACK_WEBHOOK) {
-      const parts = [];
-      if (fullName) parts.push(`*Name:* ${fullName}`);
-      if (company) parts.push(`*Company:* ${company}`);
-      if (details) parts.push(`*Details:* ${details}`);
-      if (parts.length > 0) {
-        ctx.waitUntil(
-          fetch(env.SLACK_WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              text: `Waitlist update for *${email}*:\n${parts.join('\n')}`,
-            }),
-          }).catch((e) => console.error('Slack error:', e.message))
-        );
-      }
-    }
-
-    // Update Intercom contact
-    if (env.INTERCOM_TOKEN) {
-      ctx.waitUntil(
-        (async () => {
-          try {
-            await upsertIntercomContact(env, {
-              email,
-              name: fullName || undefined,
-              customAttributes,
-            });
-          } catch (e) {
-            console.error('Intercom update error:', e.message);
-          }
-        })()
-      );
-    }
-
-    return Response.json({ success: true }, { headers: CORS_HEADERS });
-  } catch (e) {
-    console.error('Worker error:', e);
-    return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
-  }
-}
-
-// Contact form — Slack + Intercom (with conversation)
-async function handleContact(request, env, ctx) {
-  try {
-    const { name, email, category, message } = await request.json();
-
-    if (!email || !email.includes('@')) {
-      return Response.json({ error: 'Valid email required' }, { status: 400, headers: CORS_HEADERS });
-    }
-    if (!message) {
-      return Response.json({ error: 'Message required' }, { status: 400, headers: CORS_HEADERS });
-    }
-
-    // Slack notification
-    if (env.SLACK_WEBHOOK) {
-      ctx.waitUntil(
-        fetch(env.SLACK_WEBHOOK, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            text: `New contact form submission from *${name || email}*` +
-              (category ? ` [${category}]` : '') +
-              `:\n${message}`,
-          }),
-        }).catch((e) => console.error('Slack error:', e.message))
-      );
-    }
-
-    // Intercom contact + conversation
-    if (env.INTERCOM_TOKEN) {
-      ctx.waitUntil(
-        (async () => {
-          try {
-            const contactId = await upsertIntercomContact(env, {
-              email,
-              name: name || undefined,
-              customAttributes: category ? { category } : {},
-            });
-            if (contactId) {
-              await createIntercomConversation(env, {
-                contactId,
-                body: message,
-              });
-              console.log('Intercom contact+conversation created:', contactId);
-            }
-          } catch (e) {
-            console.error('Intercom contact error:', e.message, e.stack);
-          }
-        })()
-      );
-    }
-
-    return Response.json({ success: true }, { headers: CORS_HEADERS });
-  } catch (e) {
-    console.error('Worker error:', e);
-    return Response.json({ error: 'Server error' }, { status: 500, headers: CORS_HEADERS });
-  }
-}
-
-// --- Intercom API ---
+// ---------------------------------------------------------------------------
+// Minimal Intercom helpers for the contact form (kept here; not used for
+// waitlist anymore).
+// ---------------------------------------------------------------------------
 
 const INTERCOM_API = 'https://api.intercom.io';
 const INTERCOM_VERSION = '2.11';
@@ -319,124 +220,37 @@ function intercomHeaders(env) {
   };
 }
 
-async function upsertIntercomContact(env, { email, name, role = 'lead', customAttributes = {} }) {
-  if (!env.INTERCOM_TOKEN) {
-    console.error('INTERCOM_TOKEN not set');
-    return null;
-  }
-
-  const headers = intercomHeaders(env);
-
+async function upsertIntercomContact(env, { email, name }) {
   const searchRes = await fetch(`${INTERCOM_API}/contacts/search`, {
     method: 'POST',
-    headers,
-    body: JSON.stringify({
-      query: { field: 'email', operator: '=', value: email },
-    }),
+    headers: intercomHeaders(env),
+    body: JSON.stringify({ query: { field: 'email', operator: '=', value: email } }),
   });
-
   let contactId = null;
   if (searchRes.ok) {
-    const searchData = await searchRes.json();
-    if (searchData.data && searchData.data.length > 0) {
-      contactId = searchData.data[0].id;
-    }
-  } else {
-    const errText = await searchRes.text();
-    console.error('Intercom search failed:', searchRes.status, errText);
+    const d = await searchRes.json();
+    contactId = d.data?.[0]?.id || null;
   }
-
-  const body = { role, email };
+  const body = { role: 'lead', email };
   if (name) body.name = name;
-  if (Object.keys(customAttributes).length > 0) {
-    body.custom_attributes = customAttributes;
-  }
-
   if (contactId) {
-    const res = await fetch(`${INTERCOM_API}/contacts/${contactId}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify(body),
+    await fetch(`${INTERCOM_API}/contacts/${contactId}`, {
+      method: 'PUT', headers: intercomHeaders(env), body: JSON.stringify(body),
     });
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error('Intercom update failed:', res.status, errText);
-    }
     return contactId;
   }
-
   const res = await fetch(`${INTERCOM_API}/contacts`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
+    method: 'POST', headers: intercomHeaders(env), body: JSON.stringify(body),
   });
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error('Intercom create failed:', res.status, errText, '— retrying without custom_attributes');
-    // Custom attributes may not be pre-defined in this workspace; retry bare.
-    const retryBody = { role, email };
-    if (name) retryBody.name = name;
-    const retryRes = await fetch(`${INTERCOM_API}/contacts`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(retryBody),
-    });
-    if (!retryRes.ok) {
-      const retryErr = await retryRes.text();
-      console.error('Intercom create retry failed:', retryRes.status, retryErr);
-      return null;
-    }
-    const retryData = await retryRes.json();
-    return retryData.id;
-  }
-  const data = await res.json();
-  return data.id;
-}
-
-async function tagIntercomContact(env, contactId, tagName) {
-  if (!env.INTERCOM_TOKEN || !contactId) return;
-  const res = await fetch(`${INTERCOM_API}/tags`, {
-    method: 'POST',
-    headers: intercomHeaders(env),
-    body: JSON.stringify({
-      name: tagName,
-      contacts: [{ id: contactId }],
-    }),
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error(`Intercom tag "${tagName}" failed:`, res.status, errText);
-  }
-}
-
-async function untagIntercomContact(env, contactId, tagName) {
-  if (!env.INTERCOM_TOKEN || !contactId) return;
-  const res = await fetch(`${INTERCOM_API}/tags`, {
-    method: 'POST',
-    headers: intercomHeaders(env),
-    body: JSON.stringify({
-      name: tagName,
-      contacts: [{ id: contactId, untag: true }],
-    }),
-  });
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error(`Intercom untag "${tagName}" failed:`, res.status, errText);
-  }
+  if (!res.ok) return null;
+  const d = await res.json();
+  return d.id;
 }
 
 async function createIntercomConversation(env, { contactId, body }) {
-  if (!env.INTERCOM_TOKEN || !contactId) return;
-  const res = await fetch(`${INTERCOM_API}/conversations`, {
+  await fetch(`${INTERCOM_API}/conversations`, {
     method: 'POST',
     headers: intercomHeaders(env),
-    body: JSON.stringify({
-      from: { type: 'user', id: contactId },
-      body,
-    }),
+    body: JSON.stringify({ from: { type: 'user', id: contactId }, body }),
   });
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error('Intercom conversation failed:', res.status, errText);
-  }
 }
